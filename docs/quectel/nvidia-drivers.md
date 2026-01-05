@@ -2,8 +2,6 @@
 
 This guide walks through building and installing USB drivers (CDC-WDM, CDC-MBIM, QMI-WWAN) for the NVIDIA Jetson device.
 
-## Background
-
 Your running kernel may not include certain drivers by default. Rather than downloading pre-compiled drivers (which often won't work due to version mismatches), we'll compile them from source to match your exact kernel configuration.
 
 ## Step 1: Check Which Drivers Are Missing
