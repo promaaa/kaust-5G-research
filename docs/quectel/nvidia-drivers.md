@@ -138,7 +138,8 @@ Navigate and enable these drivers as **modules** (press `M` to set):
 
 Save and exit (press `Esc` until prompted, then select `Yes`).
 
-# Process dependencies
+### Process dependencies
+
 ```bash
 make olddefconfig
 ```
