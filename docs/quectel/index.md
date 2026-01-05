@@ -8,7 +8,7 @@ Check [this](https://www.quectel.com/download/quectel_umts_lte_5g_linux_usb_driv
 
 ## 1. Prerequisites
 
-###Check that the modem is visible:
+### Check that the modem is visible:
 
 ```bash
 lsusb
@@ -16,7 +16,7 @@ lsusb
 
 A Quectel device should appear.
 
-###Verify drivers are loaded:
+### Verify drivers are loaded:
 
 ```bash
 lsmod | egrep 'cdc_wdm|cdc_mbim|qmi_wwan'
@@ -34,7 +34,7 @@ Expected interface:
 wwan0
 ```
 
-###Check serial Ports (TTY):
+### Check serial Ports (TTY):
 
 ```bash
 ls /dev/ttyUSB*
