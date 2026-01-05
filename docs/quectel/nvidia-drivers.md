@@ -213,7 +213,7 @@ sudo modprobe cdc-wdm
 sudo modprobe cdc_mbim
 ```
 
-###Verify modules are loaded
+### Verify modules are loaded
 ```bash
 lsmod | grep -E 'cdc_wdm|cdc_mbim|qmi'
 ```
