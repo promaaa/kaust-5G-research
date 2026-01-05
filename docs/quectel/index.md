@@ -2,7 +2,7 @@
 
 This document describes how to set up a Quectel cellular modem on Linux.
 
-Check [this](https://www.quectel.com/download/quectel_umts_lte_5g_linux_usb_driver_user_guide_v3-2/) document from Quectel for more information.
+Check [this document](https://www.quectel.com/download/quectel_umts_lte_5g_linux_usb_driver_user_guide_v3-2/) from Quectel for more information.
 
 ---
 
