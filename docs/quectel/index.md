@@ -42,7 +42,7 @@ ls /dev/ttyUSB*
 
 Quectel modems expose multiple USB serial interfaces.
 
-Typical mapping(as Quectel states in its [document](https://www.quectel.com/download/quectel_umts_lte_5g_linux_usb_driver_user_guide_v3-2/)): 
+Typical mapping(as Quectel states in this [document](https://www.quectel.com/download/quectel_umts_lte_5g_linux_usb_driver_user_guide_v3-2/)): 
 
 * `ttyUSB0` – DIAG
 * `ttyUSB1` – GNSS
