@@ -53,10 +53,11 @@ sudo apt install adb
 git clone https://github.com/fgsect/scat
 
 #Python 3.7 is a minimum requirement.
+sudo apt install -y python3-venv python3-pip
 python3 -m venv ~/venvs/scat
 source ~/venvs/scat/bin/activate
 python -m pip install -U pip wheel
-python -m pip install "signalcat[fastcrc]" 
+python -m pip install "signalcat[fastcrc]"
 ```
 
 - **On Phone:** 
@@ -65,15 +66,15 @@ python -m pip install "signalcat[fastcrc]"
 	- **System** -> **Developer Options** -> **USB Debugging** and **Rooted Debugging**
 		**NOTE**: *If Rooted Debugging is not available, you have to root the phone.
   - Enter in DIAG mode, it's device specific procedure. For Fairphone5 and most Qualcomm devices: ([See other phones](https://band.radio/diag))
-		- `adb devices`: Show list of devices connected to the laptop with their IDs.
-		- `adb -s IDPhone root`: Run adb as root.
-		- `adb -s IDPhone shell`: Open shell on your Android device.
-			- `setprop sys.usb.config diag,serial_cdev,rmnet,dpl,qdss,adb` : Enter DIAG mode in the phone. This lets us access baseband debugging interfaces.
-			- `exit`
+	- `adb devices`: Show list of devices connected to the laptop with their IDs.
+	- `adb -s IDPhone root`: Run adb as root.
+	- `adb -s IDPhone shell`: Open shell on your Android device.
+		- `setprop sys.usb.config diag,serial_cdev,rmnet,dpl,qdss,adb` : Enter DIAG mode in the phone. This lets us access baseband debugging interfaces.
+		- `exit`
      
 **NOTE**: If you are using Quectel module, you just have to correctly set it up as documented in [this document](./quectel/index.md).
 
-### Usage
+#### Usage
 - **On Laptop**:
 ```bash
 source ~/venvs/scat/bin/activate
@@ -86,6 +87,7 @@ wireshark -X lua_script:../wireshark/scat.lua -r quectel.pcap
 lsusb
 #Example output: Bus 001 Device 061: ID 05c6:90db Qualcomm, Inc. FP5.
 sudo -E ~/venvs/scat/bin/scat -t qc -u -a 001:061 -i 0 --pcap phone.pcap
+wireshark -X lua_script:../wireshark/scat.lua -r phone.pcap
 ```
 
 - `-t`: `qc` for Qualcomm and `sec` for Samsung. As FairPhone 5 has Qualcomm chip we will use `qc`.
@@ -95,15 +97,14 @@ sudo -E ~/venvs/scat/bin/scat -t qc -u -a 001:061 -i 0 --pcap phone.pcap
 - `Ctrl + C`: Stop
 - `wireshark -X lua_script:../wireshark/scat.lua -r phone.pcap`:  Open the .pcap file using wireshark, note that  scat.lua should be used so wireshark can understand 5G packets.
 
-### NOTES
-1. To run SCAT with Samsung Exynos phones additional parameter is required, `--start-magic 0x34dc12fe` **(DON'T POST IT ON INTERNET)**
-2. Samsung phones with **No** Exynos chip are not supported.
-3. Wireshark 3.3.0 or above is required for 5G packets.
+#### NOTES
+1. Samsung phones with **No** Exynos chip are not supported.
+2. Wireshark 3.3.0 or above is required for 5G packets.
 
 
 
 
-## [Scrpy](https://github.com/Genymobile/scrcpy/blob/69858c6f437b1bfece96bc291c607de842837d36/doc/linux.md)
+### [Scrpy](https://github.com/Genymobile/scrcpy/blob/69858c6f437b1bfece96bc291c607de842837d36/doc/linux.md)
 This tool allows screen mirroring and control a smartphone from your computer.
 You should enable USB Debugging at your phone.
 On your computer you have to download the latest version from their git repository.
