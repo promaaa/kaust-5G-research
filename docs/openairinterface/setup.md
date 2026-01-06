@@ -56,6 +56,19 @@ cd ~/oai-cn5g
 docker compose pull
 ```
 
+### Configure Network Functions
+
+The config file `config.yaml` is located at `~/oai-cn5g/conf` and contains the configuration parameters for all the network functions.  Here you can modify the list of supported **PLMN**, integrity and  encryption algorithms, and other parameters.
+
+In addition to this, you can update the database of the system by modifying the `oai_db.sql` file inside `~/oai-cn5g/database`. For instance, in order to add new users (sim cards) to the system, you would have to write the following sql query:
+```
+INSERT INTO `AuthenticationSubscription` (`ueid`, `authenticationMethod`, `encPermanentKey`, `protectionParameterId`, `sequenceNumber`, `authenticationManagementField`, `algorithmId`, `encOpcKey`, `encTopcKey`, `vectorGenerationInHss`, `n5gcAuthMethod`, `rgAuthenticationInd`, `supi`) VALUES
+    ('001010000059449', '5G_AKA', '5686e601f3a1942d4c5cd262ba6b4b20', '5686e601f3a1942d4c5cd262ba6b4b20', '{\"sqn\": \"000000000000\", \"sqnScheme\": \"NON_TIME_BASED\", \"lastIndexes\": {\"ausf\": 0}}', '8000', 'milenage', 'aeb1cabd8ed7a09b48d17eb3d8af172c', NULL, NULL, NULL, NULL, '001010000059449');
+```
+You only have to modify the values of `ueid, encPermanentKey, protectionParameterId, encOpcKey, supi`  based on your sim card parameters.
+
+**NOTE**: The configuration file and the database must be updated **before starting the containers**.
+
 
 ### Start/Stop Core Network
 
@@ -70,19 +83,6 @@ Stop:
 cd ~/oai-cn5g
 docker compose down
 ```
-
-### Configure Network Functions
-
-The config file `config.yaml` is located at `~/oai-cn5g/conf` and contains the configuration parameters for all the network functions.  Here you can modify the list of supported **PLMN**, integrity and  encryption algorithms, and other parameters.
-
-In addition to this, you can update the database of the system by modifying the `oai_db.sql` file inside `~/oai-cn5g/database`. For instance, in order to add new users (sim cards) to the system, you would have to write the following sql query:
-```
-INSERT INTO `AuthenticationSubscription` (`ueid`, `authenticationMethod`, `encPermanentKey`, `protectionParameterId`, `sequenceNumber`, `authenticationManagementField`, `algorithmId`, `encOpcKey`, `encTopcKey`, `vectorGenerationInHss`, `n5gcAuthMethod`, `rgAuthenticationInd`, `supi`) VALUES
-    ('001010000059449', '5G_AKA', '5686e601f3a1942d4c5cd262ba6b4b20', '5686e601f3a1942d4c5cd262ba6b4b20', '{\"sqn\": \"000000000000\", \"sqnScheme\": \"NON_TIME_BASED\", \"lastIndexes\": {\"ausf\": 0}}', '8000', 'milenage', 'aeb1cabd8ed7a09b48d17eb3d8af172c', NULL, NULL, NULL, NULL, '001010000059449');
-```
-You only have to modify the values of `ueid, encPermanentKey, protectionParameterId, encOpcKey, supi`  based on your sim card parameters.
-
-**NOTE**: The configuration file and the database must be updated **before starting the containers**.
 
 ## gNB Setup
 ### Build UHD from source:
