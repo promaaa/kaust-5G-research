@@ -2,7 +2,7 @@
 
 This document describes how a **baseline OpenAirInterface (OAI) 5G Standalone deployment** is extended to support **SIB8 emergency alert transmission** and a custom **Network Management System (NMS)**.
 
-> **NOTE**
+> **NOTE:**
 > The baseline OAI setup described in [`setup.md`](setup.md) **must be completed first**.
 
 ## Overview
@@ -32,7 +32,7 @@ git clone https://github.com/5gattacks/internship-docs.git ~/5g-sib8-alert
 
 Replace OAI CN docker compose file:
 ```bash
-cp ~/5g-sib8-alert/configuration/oai-docker-compose.yml ~/oai-cn5g/docker-compose.yaml
+cp ~/5g-sib8-alert/assets/configuration/oai-docker-compose.yml ~/oai-cn5g/docker-compose.yaml
 ```
 
 ### gNB
@@ -41,7 +41,7 @@ Build gNB:
 ```
 cd ~/openairinterface5g
 git checkout 92980ceb725a94dbfe97c509d16f1313eee083e0
-git apply ~/5g-sib8-alert/oai-alert.patch
+git apply ~/5g-sib8-alert/assets/oai-alert.patch
 
 # Build OAI gNB
 cd ~/openairinterface5g/cmake_targets
@@ -68,14 +68,14 @@ docker compose down
 
 Start:
 ```bash
-cd ~/nms
+cd ~/5g-sib8-alert/assets/
 ./start-nms.sh
 ```
 The web interface is accessible at http://localhost:3000/.
 
 Stop:
 ```bash
-cd ~/nms
+cd ~/5g-sib8-alert/assets/
 ./stop-nms.sh
 ```
 **NOTE:** You should configure the parameters before running the gNB.
