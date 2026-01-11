@@ -9,8 +9,9 @@ It is intended for future reproducibility.
   - [OAI Overview](docs/openairinterface/index.md)
   - [Baseline Setup](docs/openairinterface/setup.md)
   - [NMS and SIB8 Setup](docs/openairinterface/nms-setup.md)
-  - [Firecell](docs/openairinterface/firecell.md)
   - [Configuration](docs/openairinterface/configuration.md)
+  - [Firecell](docs/openairinterface/firecell.md)
+    
 - **Quectel Module**
   - [Quectel Setup](docs/quectel/index.md)
   - [Quectel Drivers](docs/quectel/nvidia-drivers.md)
