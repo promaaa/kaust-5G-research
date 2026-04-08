@@ -9,17 +9,17 @@
 		{"id":"9aaf9fccfc8924fb","type":"file","file":"imgs/rrc_gNB_process_f1_setup_req.png","x":800,"y":-1040,"width":680,"height":159},
 		{"id":"1605744cf4b56255","type":"file","file":"imgs/rrc_gnb_task.png","x":800,"y":-1299,"width":880,"height":198},
 		{"id":"66dfa5319686bdb4","type":"file","file":"imgs/mac_rrc_dl_direct_init.png","x":-1540,"y":-350,"width":720,"height":272},
-		{"id":"bc19ccfbeae20380","type":"text","text":"`nr-softmodem.c`\n**create_gNB_tasks():**\n1. fill general instances:\n\t1. RCconfig_nr_macrlc(cfg): fill **RC.nrmac**\n\t2. RCconfig_NRRRC(): fill **RC.nrrrc** (see **1st:call** flow)\n2. in addition to other tasks, it creates **rrc_gnb_task** which is implemented in `rrc_gNB.c` (see **2nd: itti_create_task** flow)","x":-240,"y":-1865,"width":480,"height":266},
 		{"id":"47550f4738c0d8f7","type":"file","file":"imgs/mar_rrc_dl_direct.c methods.png","x":-1540,"y":-40,"width":720,"height":264},
 		{"id":"c7be426031ede94a","type":"file","file":"imgs/mac_rrc_dl_f1ap_init.png","x":-2420,"y":-220,"width":677,"height":237},
-		{"id":"1a30c20895883fc7","type":"file","file":"imgs/create_gNB_tasks.png","x":301,"y":-2095,"width":537,"height":395},
 		{"id":"879bfcb75e8bf14d","type":"file","file":"imgs/mar_rrc_dl_handler.c.png","x":-1592,"y":258,"width":824,"height":400},
 		{"id":"a0b269581d512190","type":"file","file":"imgs/f1_setup_response_f1ap.png","x":-2420,"y":40,"width":678,"height":140},
 		{"id":"c9549b625fd479e8","type":"text","text":"`mac_rrc_dl_handler.c`\n**f1_setup_response()** or **write_replace_warning_req()**\n- We're now at the **MAC** layer.","x":120,"y":-580,"width":608,"height":140},
 		{"id":"8ee342ab34000bd9","type":"text","text":"`rrc_gNB_du.c:`\n**rrc_gNB_process_f1_setup_req():**\n- generates mib, sib1, sibs, with addition to other things obviously.\n- calls `rrc->mac_rrc.f1_setup_response` which is in our case `f1_setup_response_direct`\n- `f1_setup_response_direct` just calls `f1_setup_response` (See note in `mac_rrc_dl_direct.c` card)\n- **Our work:** we call `write_replace_warning_req_trigger`  which will setup the SIB8 message, then it'll call `rrc->mac_rrc.write_replace_warning_req` which is currently `write_replace_warning_req_direct` (monolithic)\n- `write_replace_warning_req_direct` just calls `write_replace_warning_req`","x":120,"y":-1040,"width":608,"height":400},
 		{"id":"52aa97c1aaaaf8d8","type":"file","file":"F1 OAI Implementation Status.md","x":-1310,"y":-1080,"width":520,"height":160},
-		{"id":"63d26751029eb003","type":"file","file":"imgs/Pasted image 20260406185238.png","x":300,"y":-1667,"width":538,"height":136},
-		{"id":"bcc258e771231248","type":"file","file":"imgs/write_replace_warning_req_trigger.png","x":800,"y":-820,"width":510,"height":200}
+		{"id":"bcc258e771231248","type":"file","file":"imgs/write_replace_warning_req_trigger.png","x":800,"y":-820,"width":510,"height":200},
+		{"id":"bc19ccfbeae20380","type":"text","text":"`nr-softmodem.c`\n**create_gNB_tasks():**\n1. fill general instances:\n\t1. RCconfig_nr_macrlc(cfg): fill **RC.nrmac**\n\t2. RCconfig_NRRRC(): fill **RC.nrrrc** (see **1st:call** flow)\n2. in addition to other tasks, it creates **rrc_gnb_task** which is implemented in `rrc_gNB.c` (see **2nd: itti_create_task** flow)","x":-240,"y":-1865,"width":480,"height":266},
+		{"id":"1a30c20895883fc7","type":"file","file":"imgs/create_gNB_tasks.png","x":301,"y":-2095,"width":537,"height":395},
+		{"id":"63d26751029eb003","type":"file","file":"imgs/Pasted image 20260406185238.png","x":300,"y":-1667,"width":538,"height":136}
 	],
 	"edges":[
 		{"id":"e507ae673b5e900a","fromNode":"bc19ccfbeae20380","fromSide":"bottom","toNode":"8be6babcbe2fe488","toSide":"top","color":"6","label":"1st: call"},

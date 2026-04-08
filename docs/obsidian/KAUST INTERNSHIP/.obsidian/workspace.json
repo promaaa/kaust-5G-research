@@ -11,17 +11,14 @@
             "id": "5d99e3bb3f8c54ea",
             "type": "leaf",
             "state": {
-              "type": "canvas",
+              "type": "markdown",
               "state": {
-                "file": "OAI_CODE_gNB.canvas",
-                "viewState": {
-                  "x": 282.4158295951381,
-                  "y": -1783.4593831847633,
-                  "zoom": 0.03311694377266716
-                }
+                "file": "Notes.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-layout-dashboard",
-              "title": "OAI_CODE_gNB"
+              "icon": "lucide-file",
+              "title": "Notes"
             }
           }
         ]
@@ -186,49 +183,10 @@
       "bases:Create new base": false
     }
   },
-  "floating": {
-    "id": "1b14c23e5d081b17",
-    "type": "floating",
-    "children": [
-      {
-        "id": "0158289f8010092f",
-        "type": "window",
-        "children": [
-          {
-            "id": "e67c2b003789677c",
-            "type": "tabs",
-            "children": [
-              {
-                "id": "fdbc3885a11452bb",
-                "type": "leaf",
-                "state": {
-                  "type": "markdown",
-                  "state": {
-                    "file": "Notes.md",
-                    "mode": "source",
-                    "source": false
-                  },
-                  "icon": "lucide-file",
-                  "title": "Notes"
-                }
-              }
-            ]
-          }
-        ],
-        "direction": "vertical",
-        "x": 984,
-        "y": 1735,
-        "width": 680,
-        "height": 760,
-        "maximize": true,
-        "zoom": 1.5
-      }
-    ]
-  },
-  "active": "fdbc3885a11452bb",
+  "active": "5d99e3bb3f8c54ea",
   "lastOpenFiles": [
-    "Notes.md",
     "OAI_CODE_gNB.canvas",
+    "Notes.md",
     "F1 OAI Implementation Status.md"
   ]
 }
