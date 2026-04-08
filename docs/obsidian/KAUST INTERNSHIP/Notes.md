@@ -60,4 +60,3 @@ U-Plane (User Plane): The path taken by the actual user data (e.g., internet tra
 Socket: Technical combination of an IP address and a port number allowing two network applications to communicate.
 3GPP (3rd Generation Partnership Project): The global organization that develops technical specifications and standards for mobile networks, including 5G.
 
----

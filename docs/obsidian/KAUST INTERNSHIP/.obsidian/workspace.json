@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Notes.md",
+                "file": "Phase 1 - Emulated Mode Setup Guide.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Notes"
+              "title": "Phase 1 - Emulated Mode Setup Guide"
             }
           }
         ]
@@ -185,6 +185,8 @@
   },
   "active": "5d99e3bb3f8c54ea",
   "lastOpenFiles": [
+    "Phase 1 - Emulated mode.md",
+    "Phase 1 - Emulated Mode Setup Guide.md",
     "OAI_CODE_gNB.canvas",
     "Notes.md",
     "F1 OAI Implementation Status.md"
