@@ -40,15 +40,15 @@ UE <--- 5G Emission ---> gNB (UAV) <---Backhaul (NGAP)---> AMF
 **FIAP**
 
 ### DU/CU Split Parameters
-| OAI Configuration Parameter        | Function                                                              | Typical Value                                                 |
-| ---------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------------- |
-| `tr_n_preference`                  | Defines the "Northbound" network interface type (towards the CU).     | `"f1"` (Enables 3GPP functional split)                        |
-| `local_n_if_name`                  | Designates the local physical or virtual interface of the DU.         | `"eth0"`, `"eth1"`, or `"lo"` (for local deployment)          |
-| `local_n_address`                  | Local IP address of the DU for binding SCTP and UDP sockets.          | `192.168.1.10` (Jetson Ethernet interface address)            |
-| `local_n_address_f1u`              | (Optional) Distinct IP address for GTP-U traffic only.                | Used to physically separate C and U planes on the DU.          |
-| `remote_n_address`                 | Destination IP address of the CU for F1AP communication.              | `192.168.1.20` (Remote server IP address)                     |
-| `local_n_portc` / `remote_n_portc` | Local and remote binding ports for the control plane (SCTP).          | `500` (Local DU port) / `501` (Remote CU port)                |
-| `local_n_portd` / `remote_n_portd` | Local and remote binding ports for the user plane (GTP-U).            | `2152` (Standard defined by 3GPP)                             |
+| OAI Configuration Parameter        | Function                                                          | Typical Value                                         |
+| ---------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------- |
+| `tr_n_preference`                  | Defines the "Northbound" network interface type (towards the CU). | `"f1"` (Enables 3GPP functional split)                |
+| `local_n_if_name`                  | Designates the local physical or virtual interface of the DU.     | `"eth0"`, `"eth1"`, or `"lo"` (for local deployment)  |
+| `local_n_address`                  | Local IP address of the DU for binding SCTP and UDP sockets.      | `192.168.1.10` (Jetson Ethernet interface address)    |
+| `local_n_address_f1u`              | (Optional) Distinct IP address for GTP-U traffic only.            | Used to physically separate C and U planes on the DU. |
+| `remote_n_address`                 | Destination IP address of the CU for F1AP communication.          | `192.168.1.20` (Remote server IP address)             |
+| `local_n_portc` / `remote_n_portc` | Local and remote binding ports for the control plane (SCTP).      | `500` (Local DU port) / `501` (Remote CU port)        |
+| `local_n_portd` / `remote_n_portd` | Local and remote binding ports for the user plane (GTP-U).        | `2152` (Standard defined by 3GPP)                     |
 
 **ABBREVIATIONS OF THE TABLE**
 F1: Standardized communication interface between the CU and the DU.
@@ -60,3 +60,6 @@ U-Plane (User Plane): The path taken by the actual user data (e.g., internet tra
 Socket: Technical combination of an IP address and a port number allowing two network applications to communicate.
 3GPP (3rd Generation Partnership Project): The global organization that develops technical specifications and standards for mobile networks, including 5G.
 
+
+
+CU contains packet data convergence protocol (PDCP) and above layers in RAN protocol stack and can support multiple DUs running Radio link control layer and below network functionalities.
