@@ -20,6 +20,47 @@
               "icon": "lucide-file",
               "title": "Phase 1 - Emulated Mode Setup Guide"
             }
+          },
+          {
+            "id": "2d51284dbe01d26d",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "Slides/slide-imgs/phase2.png"
+              },
+              "icon": "lucide-image",
+              "title": "phase2"
+            }
+          },
+          {
+            "id": "7b3ab8430e0585ea",
+            "type": "leaf",
+            "state": {
+              "type": "image",
+              "state": {
+                "file": "Slides/slide-imgs/phase2.png"
+              },
+              "icon": "lucide-image",
+              "title": "phase2"
+            }
+          }
+        ],
+        "currentTab": 2
+      },
+      {
+        "id": "8e1b184f30bde2c9",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "6c1547ccf5bf70b0",
+            "type": "leaf",
+            "state": {
+              "type": "reveal-preview-view",
+              "state": {},
+              "icon": "lucide-file",
+              "title": "Slide Preview"
+            }
           }
         ]
       }
@@ -180,13 +221,26 @@
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "obsidian-advanced-slides:Show Slide Preview": false
     }
   },
-  "active": "5d99e3bb3f8c54ea",
+  "active": "bc9d3696f2ac55ed",
   "lastOpenFiles": [
-    "Phase 1 - Emulated mode.md",
+    "Pasted image 20260409090212.png",
+    "Slides/slide-imgs/phase2.png",
     "Phase 1 - Emulated Mode Setup Guide.md",
+    "Slides/Slides W1.md",
+    "Slides/Slides W2.md",
+    "Slides/slide-imgs/phase1.png",
+    "phase1 1.png",
+    "Slides/slide-imgs/Pasted image 20260409085539.png",
+    "Slides/slide-imgs/Pasted image 20260409084351.png",
+    "Slides",
+    "Slides/Notes for w1.md",
+    "Slides/slide-imgs",
+    "Slides/slide-imgs/Pasted image 20260409084047.png",
+    "Phase 1 - Emulated mode.md",
     "OAI_CODE_gNB.canvas",
     "Notes.md",
     "F1 OAI Implementation Status.md"
