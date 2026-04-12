@@ -1,4 +1,9 @@
 
+https://ece.northeastern.edu/wineslab/papers/ferranti2020skycell.pdf
+https://cse.iitm.ac.in/~ayon/files/skyran-conext18.pdf
+https://www.eurecom.fr/en/publication/5492
+https://dl.acm.org/doi/10.1145/3495243.3558750
+
 4/5 UAV CU/DU OAI separation :  Very interesting but not detailed paper on the implementation of a CU/DU separation on an UAV.
 https://arxiv.org/abs/2305.05983
 
