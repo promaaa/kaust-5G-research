@@ -21,7 +21,6 @@ https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10651594
 2/5 :  5G Edge vision: Jetson Nano + OAI for video streaming (blind): Not completely related to the topic but uses a Jetson Nano connected to the UE.
 https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=10570607
 
-
 1/5 : Comparison of 5G Wireless Backhaul Technologies : Wifi is not a good backhauling technique. Other than that, no particularly helpful information since OAI uses Emulated IAB.
 https://ieeexplore.ieee.org/abstract/document/11366393
 
