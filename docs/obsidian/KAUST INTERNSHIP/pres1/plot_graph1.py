@@ -1,29 +1,24 @@
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
 import numpy as np
 
-# Graph 1: USB DMA Bandwidth Comparison (simple bar chart)
-fig, ax = plt.subplots(figsize=(8, 5))
+# Exact data and style from generate_graphs.py (Graph 1) - Only Translated
+labels = ['Theoretical\n(USB 3.2)', 'x86 Mini-PC', 'Jetson Orin\n(Measured)', '5G NR\nMinimum']
+values = [10, 7, 3, 4.5]
+colors = ['#4CAF50', '#2196F3', '#F44336', '#9C27B0']
 
-labels = ['Jetson Nano\n(measured)', '5G NR 20MHz\n(required)', '5G NR 100MHz\n(required)']
-values = [3.0, 4.8, 24.0]
-colors = ['#e74c3c', '#27ae60', '#27ae60']
+fig, ax = plt.subplots(figsize=(8, 4))
 
-bars = ax.bar(labels, values, color=colors, width=0.6, edgecolor='black', linewidth=1.2)
+ax.bar(labels, values, color=colors, width=0.5, edgecolor='black', linewidth=0.5)
 
-ax.set_ylabel('Bandwidth (Gbps)', fontsize=12)
-ax.set_title('USB 3.0 DMA Bandwidth: Jetson Nano vs 5G Requirements', fontsize=13, fontweight='bold')
-ax.set_ylim(0, 28)
+for i, v in enumerate(values):
+    ax.text(i, v + 0.3, f'{v} Gbps', ha='center', fontsize=10, fontweight='bold')
 
-for bar, val in zip(bars, values):
-    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.5, f'{val:.1f} Gbps',
-            ha='center', va='bottom', fontsize=11, fontweight='bold')
-
-ax.spines['top'].set_visible(False)
-ax.spines['right'].set_visible(False)
-ax.grid(axis='y', alpha=0.3)
+ax.set_ylabel('Bandwidth (Gbps)')
+ax.set_title('USB 3.2 Bandwidth Comparison')
+ax.set_ylim(0, 12)
+ax.axhline(y=4.5, color='red', linestyle='--', alpha=0.5)
 
 plt.tight_layout()
-plt.savefig('graph1_bandwidth_comparison.png', dpi=150, bbox_inches='tight')
+plt.savefig('graph1_bandwidth_comparison.png', facecolor='white')
 plt.close()
-print("Graph 1 saved: graph1_bandwidth_comparison.png")
+print("Created: graph1_bandwidth_comparison.png")

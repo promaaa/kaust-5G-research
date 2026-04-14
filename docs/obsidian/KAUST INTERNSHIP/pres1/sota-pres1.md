@@ -4,15 +4,14 @@
 
 ## 1. Carte de Littérature : Articles par Matériel et Impact
 
-![Carte des Articles](sota_papers_map.png)
 
-| Article | Matériel | Testé en Vol | Notes |
-|---------|----------|--------------|-------|
-| **SkyCell** | NUC + USRP B210 | ✅ | Première station BS 5G aérienne |
-| **SkyRAN** | NUC + USRP B210 | ✅ | Étude de positionnement LTE |
-| **Flying Rebots** | x86 | ❌ | Conceptuel uniquement |
-| **Jetson Nano OAI** | Jetson Nano | ❌ | Échec (limites ISA/BW) |
-| **5G Edge Vision** | Jetson Nano | ❌ | IA de bord uniquement |
+| Article             | Matériel        | Testé en Vol | Notes                           |
+| ------------------- | --------------- | ------------ | ------------------------------- |
+| **SkyCell**         | NUC + USRP B210 | oui          | Première station BS 5G aérienne |
+| **SkyRAN**          | NUC + USRP B210 | oui          | Étude de positionnement LTE     |
+| **Flying Rebots**   | x86             | non          | Conceptuel uniquement           |
+| **Jetson Nano OAI** | Jetson Nano     | non          | Échec (limites ISA/BW)          |
+| **5G Edge Vision**  | Jetson Nano     | non          | IA de bord uniquement           |
 
 **Résultat Clé :** Les prototypes UAV-BS prouvés utilisent tous **NUC + USRP B210**
 
@@ -23,20 +22,20 @@
 ```mermaid
 flowchart LR
     subgraph Need["Ce Dont Nous Avons Besoin"]
-        gNB["5G gNB\n(OAI + USRP)"]
-        Portable["Portable\n(Mini-PC x86)"]
-        Security["Analyse\nde Sécurité"]
+        gNB["5G gNB (OAI + USRP)"]
+        Portable["Portable (Mini-PC x86)"]
+        Security["Analyse de Sécurité"]
     end
     
     subgraph Have["Ce Que la Littérature Fournit"]
-        SkyCell["SkyCell\nStation BS 5G ✓"]
-        SkyRAN["SkyRAN\nStation BS LTE ✓"]
-        Position["Concepts de\nPositionnement ✓"]
+        SkyCell["SkyCell Station BS 5G ✓"]
+        SkyRAN["SkyRAN Station BS LTE ✓"]
+        Position["Concepts de Positionnement ✓"]
     end
     
     subgraph Gap["L'ÉCART"]
-        Attack["Démo\nd'Attaque ❌"]
-        Alert["Alerte d'Urgence\nSécurité ❌"]
+        Attack["Démo d'Attaque ❌"]
+        Alert["Alerte d'Urgence Sécurité ❌"]
     end
     
     SkyCell --> gNB
