@@ -1,6 +1,5 @@
 ## **Research Progress Report**  1
 
----
 
 **Timeline:** April 7 - July 31, 2025 (16 weeks)
 
@@ -41,7 +40,7 @@ tegra-xusb controller enters SC7 low-power state on 2-5ms throughput variations
 | Jetson Orin Nano            | ~3 Gbps             | <40 MHz           |
 | 5G NR Minimum               | ~4.5 Gbps           | 50 MHz required   |
 
-
+$D=BW×S×C$
 
 ---
 
@@ -50,6 +49,8 @@ tegra-xusb controller enters SC7 low-power state on 2-5ms throughput variations
 
 ![Benchmark](graph6_benchmark_comparison.png)
 
+
+![[graph6_power_efficiency.png]]
 ---
 
 #### Summary: **Three Fundamental Limitations (Not Software-Correctable):**
@@ -59,6 +60,3 @@ tegra-xusb controller enters SC7 low-power state on 2-5ms throughput variations
 | CPU Processing  | AVX-512 (x86) vs. ARM Mismatch  | 40-60% Overhead                              |
 | USB Stability   | Aggressive power management     | Fatal disconnection: USRP crashes            |
 | Data Throughput | DMA bandwidth ceiling (~3 Gbps) | Throttled Performance: BW limited to <40 MHz |
-
-
----
