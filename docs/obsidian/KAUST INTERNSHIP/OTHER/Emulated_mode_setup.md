@@ -441,3 +441,5 @@ docker exec rfsim5g-oai-nr-ue ping -I oaitun_ue1 -c 3 192.168.72.135
 # Cleanup
 docker compose down
 ```
+
+![[Pasted image 20260416092236.png]]
