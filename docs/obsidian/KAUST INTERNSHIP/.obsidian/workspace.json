@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "pres1/Meeting1.md",
+                "file": "pres_update/Research_Progress_Report.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Meeting1"
+              "title": "Research_Progress_Report"
             }
           },
           {
@@ -92,8 +92,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "9f6fad8f76d0d33e",
@@ -189,6 +188,7 @@
   },
   "left-ribbon": {
     "hiddenItems": {
+      "table-editor-obsidian:Advanced Tables Toolbar": false,
       "switcher:Open quick switcher": false,
       "graph:Open graph view": false,
       "canvas:Create new canvas": false,
@@ -201,8 +201,10 @@
   },
   "active": "2d51284dbe01d26d",
   "lastOpenFiles": [
-    "pres1/graph6_power_efficiency.png",
+    "pres_update/summary_status.png",
+    "pres_update/Research_Progress_Report.md",
     "pres1/Meeting1.md",
+    "pres1/graph6_power_efficiency.png",
     "pres1/graph6_benchmark_comparison.png",
     "pres1/graph2_usb_power_comparison.png",
     "pres1/plot_graph6_power_efficiency.py",
