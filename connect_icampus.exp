@@ -1,0 +1,6 @@
+#!/usr/bin/expect -f
+
+spawn sudo nmcli connection up iCampus
+expect "Password (802-1x.password): "
+send "@rab1eSaoudite\r"
+expect eof

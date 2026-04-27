@@ -1,3 +1,4 @@
+
 5/5 : SkyCell: A Prototyping Platform for 5G Aerial Base Stations:  
 Deployment of an UABS (Unmanned Aerial Base Station) with proper 5G Backhauling. They used an  Intel NUC 7i7DNKE Mini PC  (apparently not real 5G due to lack of software but 4G (LTE) instead) on a DJI M600Pro
 https://ece.northeastern.edu/wineslab/papers/ferranti2020skycell.pdf

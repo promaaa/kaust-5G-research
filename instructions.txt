@@ -1,0 +1,152 @@
+================================================================================
+ETHERNET DIRECT CONNECTION - CU/DU SEPARATION TEST INSTRUCTIONS
+================================================================================
+
+PURPOSE: Test 5G CU/DU separation with direct Ethernet cable between machines
+================================================================================
+
+MACHINES:
+  - serber-firecell (Core Network + CU)
+    - Ethernet: 10.0.0.1/24 (enp6s0)
+  - serber-minipc (DU - nr-softmodem)
+    - Ethernet: 10.0.0.2/24 (enp4s0)
+
+================================================================================
+STEP 1: PHYSICAL CONNECTION
+================================================================================
+  - Connect Ethernet cable between the two machines
+  - Use dedicated interfaces (enp6s0 on firecell, enp4s0 on minipc)
+
+================================================================================
+STEP 2: CONFIGURE STATIC IPs (BOTH MACHINES)
+================================================================================
+
+On serber-minipc:
+  Commands:
+    sudo ip addr add 10.0.0.2/24 dev enp4s0
+    sudo ip link set enp4s0 up
+
+On serber-firecell (already configured):
+  - Interface: enp6s0
+  - IP: 10.0.0.1/24 (already set)
+
+================================================================================
+STEP 3: VERIFY CONNECTIVITY
+================================================================================
+  From minipc:    ping 10.0.0.1
+  From firecell:  ping 10.0.0.2
+  Both pings must succeed before proceeding.
+
+================================================================================
+STEP 4: CONFIGURE NAT ON serber-firecell (CRITICAL FOR AMF)
+================================================================================
+
+The AMF runs inside a Docker container on the demo-oai network (192.168.70.x).
+You must configure DNAT to forward SCTP traffic from 10.0.0.1:38412 to the AMF container.
+
+  Commands on serber-firecell:
+    # Check AMF container IP (gets new IP on each restart)
+    sudo docker inspect oai-amf | grep '"IPAddress"'
+
+    # Flush old NAT rules and add correct one
+    sudo iptables -t nat -F PREROUTING
+    sudo iptables -t nat -A PREROUTING -p sctp -d 10.0.0.1 --dport 38412 -j DNAT --to-destination <AMF_IP>:38412
+
+    # Example (current AMF IP):
+    sudo iptables -t nat -F PREROUTING
+    sudo iptables -t nat -A PREROUTING -p sctp -d 10.0.0.1 --dport 38412 -j DNAT --to-destination 192.168.70.136:38412
+
+    # Also allow forwarding
+    sudo sysctl net.ipv4.conf.enp6s0.forwarding=1
+    sudo iptables -I DOCKER-USER -j ACCEPT
+
+================================================================================
+STEP 5: START CORE NETWORK ON serber-firecell
+================================================================================
+
+  Commands on serber-firecell:
+    cd ~/oai-cn/docker-compose
+    sudo docker-compose -f docker-compose-basic-nrf.yaml down
+    sudo docker-compose -f docker-compose-basic-nrf.yaml up -d
+
+  Verify:
+    sudo docker ps  (all containers should be healthy)
+    sudo docker logs oai-amf 2>&1 | grep "gNB.*Connected"
+
+================================================================================
+STEP 6: CONFIGURE DU ON serber-minipc
+================================================================================
+
+  Config file: ~/oai-du/gnb-ethernet-direct.conf
+
+  Key settings in config:
+    amf_ip_address = ({ ipv4 = "10.0.0.1"; });
+    GNB_IPV4_ADDRESS_FOR_NG_AMF = "10.0.0.2/24";
+    GNB_IPV4_ADDRESS_FOR_NGU = "10.0.0.2/24";
+
+  To create from working rfsim config:
+    cp ~/oai-du/gnb-sa.band78.fr1.106prb.rfsim.modified.conf ~/oai-du/gnb-ethernet-direct.conf
+    sed -i "s/10\.76\.170\.110/10.0.0.1/g" ~/oai-du/gnb-ethernet-direct.conf
+    sed -i "s/10\.78\.202\.79/10.0.0.2/g" ~/oai-du/gnb-ethernet-direct.conf
+
+================================================================================
+STEP 7: START DU ON serber-minipc
+================================================================================
+
+  Commands:
+    cd ~/openairinterface5g/cmake_targets/ran_build/build
+    sudo ./nr-softmodem -O ~/oai-du/gnb-ethernet-direct.conf --rfsim &
+
+  Watch for:
+    [NGAP]   Registered new gNB[0]
+    [NR_RRC] cell PLMN 208.95 Cell ID 12345678 is in service
+
+  Check logs:
+    tail -f /tmp/gnb.log
+
+================================================================================
+STEP 8: VERIFY CU/DU CONNECTION
+================================================================================
+
+  On serber-firecell AMF:
+    sudo docker logs oai-amf 2>&1 | grep -E "gNB|Connected"
+
+  Expected output:
+    |  Index |      Status      |  Global Id  |  gNB Name  |    PLMN    |
+    |    1   |   Connected     |    0x0E00   |   gNB-OAI  |   208,95   |
+
+================================================================================
+TROUBLESHOOTING
+================================================================================
+
+If DU fails to connect:
+1. Check if AMF container is running:
+   sudo docker ps | grep oai-amf
+
+2. Check NAT rules:
+   sudo iptables -t nat -L PREROUTING -n | grep 38412
+
+3. If AMF container restarted, NAT rules may need updating:
+   - Get new IP: sudo docker inspect oai-amf | grep '"IPAddress"'
+   - Update DNAT: sudo iptables -t nat -F PREROUTING
+   - Then: sudo iptables -t nat -A PREROUTING -p sctp -d 10.0.0.1 --dport 38412 -j DNAT --to-destination <NEW_AMF_IP>:38412
+
+4. Check SCTP connectivity:
+   nc -4 -u 10.0.0.1 38412 < /dev/null
+   # Should see SCTP INIT in tcpdump on firecell
+
+5. If ping fails between machines:
+   - Verify IPs are set: ip addr show enp4s0 (minipc) / enp6s0 (firecell)
+   - Check interface is UP: ip link show enp4s0
+   - Try: sudo ip link set enp4s0 up && sudo ip link set enp6s0 up
+
+================================================================================
+NOTES
+================================================================================
+- Current working config uses rfsim mode (generates artificial signal)
+- Cell: PLMN 208.95, TAC 0xa000, Cell ID 12345678, Band 78
+- gNB ID: 0xe00 (3584)
+- Band 78 (n78, 3.5 GHz, 106 PRB, 30 kHz SCS)
+- AMF runs inside Docker on demo-oai network (192.168.70.x)
+
+================================================================================
