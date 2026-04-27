@@ -33,6 +33,30 @@ Completed PRB/bandwidth benchmarking on Raspberry Pi 5 to determine stable opera
 | Memory bandwidth | 12.3 GB/s |
 | Stress-ng (4 cores) | 90% utilization |
 
+**Note:** 4GB Pi 5 is sufficient for DU-only operation. For DU + AI malware detection, 16GB is recommended (see below).
+
+---
+
+## Why 16GB for Production?
+
+For DU + AI malware detection on drone:
+
+| Component | RAM Estimate |
+| --- | --- |
+| nr-softmodem (DU) | 800 MB |
+| AI Model (lightweight CNN) | 200–500 MB |
+| Feature Extraction + Packet Buffer | 300–500 MB |
+| ROS2 / Drone Framework | 500 MB |
+| **Total Estimate** | **1.6–2.3 GB** |
+
+| Model | Price | Available RAM | Verdict |
+| --- | --- | --- | --- |
+| Pi 5 4GB | ~$70 | ~1.8GB (tight with AI) | ⚠️ Minimum |
+| Pi 5 8GB | ~$95 | ~5GB | Tight |
+| **Pi 5 16GB** | ~$140 | ~11GB | **Recommended** |
+
+**CPU is NOT the bottleneck** — Pi 5 CPU handles both DU and AI inference. RAM is the limitation.
+
 ---
 
 ## Pi 5 PRB/Bandwidth Test Results
