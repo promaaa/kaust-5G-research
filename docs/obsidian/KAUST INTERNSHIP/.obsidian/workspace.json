@@ -11,12 +11,14 @@
             "id": "7fe0c69a0479883f",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "markdown",
               "state": {
-                "file": "Other/imgs/Pasted image 20260426083216.png"
+                "file": "Presentation/Research Progress Report 4-bis.md",
+                "mode": "source",
+                "source": false
               },
-              "icon": "lucide-image",
-              "title": "Pasted image 20260426083216"
+              "icon": "lucide-file",
+              "title": "Research Progress Report 4-bis"
             }
           },
           {
@@ -197,8 +199,12 @@
       "obsidian-advanced-slides:Show Slide Preview": false
     }
   },
-  "active": "bc9d3696f2ac55ed",
+  "active": "7fe0c69a0479883f",
   "lastOpenFiles": [
+    "Presentation/weight_power_comparison.png",
+    "Presentation/CU_DU_Demonstration_Guide.md",
+    "PWS_Sending_Guide.md",
+    "Other/imgs/Pasted image 20260426083216.png",
     "Other/imgs/Pasted image 20260426083150.png",
     "Other/imgs/weight_power_comparison.png",
     "Presentation/Research Progress Report 4-bis.md",
@@ -207,8 +213,6 @@
     "Presentation/Research Progress Report 3.md",
     "Presentation/weight_power_comparison.py",
     "Untitled.md",
-    "Other/imgs/Pasted image 20260426083216.png",
-    "PWS_Sending_Guide.md",
     "5G_CU_DU_Research_Summary.md",
     "Other/imgs/Pasted image 20260421141536.png",
     "Other/Phase 1 - Emulated Mode Setup Guide.md",
@@ -243,7 +247,6 @@
     "pres1/plot_sota_figures.py",
     "pres1/plot_graph5.py",
     "pres1/plot_graph4.py",
-    "pres1/plot_graph2.py",
-    "Phase 1 - Emulated mode.md"
+    "pres1/plot_graph2.py"
   ]
 }
