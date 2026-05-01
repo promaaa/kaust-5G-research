@@ -1,0 +1,15 @@
+{
+  "name": "5g-tui",
+  "version": "1.0.0",
+  "description": "5G Network Terminal UI",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "verify": "node tests/verify-system.js",
+    "test": "node tests/verify-system.js"
+  },
+  "dependencies": {
+    "inquirer": "^9.2.12"
+  }
+}
