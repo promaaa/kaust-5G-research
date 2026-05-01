@@ -1,5 +1,9 @@
 import inquirer from 'inquirer';
 import { spawn, exec } from 'child_process';
+import { writeFileSync, unlinkSync } from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import os from 'os';
 
 const SERBER_HOST = 'serber-firecell';
 const SERBER_USER = 'serber';
@@ -75,18 +79,6 @@ function sshExecBg(cmd, host) {
             resolve({ stdout: stdout || '', stderr: stderr || '' });
         });
     });
-}
-
-function spawnTerminal(cmd) {
-    if (process.platform === 'darwin') {
-        const script = `tell application "Terminal"
-    activate
-    do script "${cmd.replace(/"/g, '\\"')}"
-end tell`;
-        spawn('osascript', ['-e', script]);
-    } else {
-        spawn('x-terminal-emulator', ['-e', cmd]);
-    }
 }
 
 function printHeader(title) {
@@ -283,9 +275,7 @@ async function onboarding() {
                 { name: 'Start Network (Full sequence)', value: 'start' },
                 { name: 'Stop Network', value: 'stop' },
                 { name: 'Restart Network', value: 'restart' },
-                { name: 'Rebuild Core (fix docker)', value: 'rebuild' },
-                { name: 'Check Status', value: 'status' },
-                { name: 'Open SSH Session', value: 'ssh' },
+                { name: 'Change Emergency Message', value: 'emergency' },
                 { name: 'Exit', value: 'exit' }
             ]
         }
@@ -425,33 +415,6 @@ async function runFullStartup(config) {
 
         console.log('\n');
         printSuccess('Startup sequence completed!\n');
-
-        const { openLogs } = await inquirer.prompt([
-            { type: 'confirm', name: 'openLogs', message: 'Open terminal windows for live log monitoring?', default: true }
-        ]);
-
-        if (openLogs) {
-            console.log('\n  Opening log terminals...\n');
-
-            const coreIp = await getResolvedHost(config.host);
-
-            const gnbCmdTerm = `sshpass -p '${SERBER_PASS}' ssh -o StrictHostKeyChecking=no ${SERBER_USER}@${coreIp} 'tail -f ~/gnb.log'`;
-            spawnTerminal(gnbCmdTerm);
-            await sleep(500);
-
-            const amfCmdTerm = `sshpass -p '${SERBER_PASS}' ssh -o StrictHostKeyChecking=no ${SERBER_USER}@${coreIp} 'docker logs -f oai-amf'`;
-            spawnTerminal(amfCmdTerm);
-            await sleep(500);
-
-            if (config.duHost) {
-                const duIp = await getResolvedHost(config.duHost);
-                const duCmdTerm = `sshpass -p '${SERBER_PASS}' ssh -o StrictHostKeyChecking=no ${SERBER_USER}@${duIp} 'tail -f ~/gnb.log'`;
-                spawnTerminal(duCmdTerm);
-                printInfo('DU log terminal opened');
-            }
-
-            printSuccess('Log terminals opened!');
-        }
 
     } catch (err) {
         console.log(`\n`);
@@ -625,6 +588,60 @@ async function rebuildCore(config) {
     ]);
 }
 
+async function changeEmergencyMessage(config) {
+    console.clear();
+    printHeader('Change Emergency Message');
+
+    try {
+        const ip = await getResolvedHost(config.host);
+        printInfo(`Fetching current message from ${config.host}...`);
+
+        const current = await sshExec('cat ~/openairinterface5g/sib8.conf', config.host);
+        const currentMsg = current.combined.match(/text=([^;]+)/)?.[1] || 'Unknown';
+
+        console.log(`\n  Current message: "${currentMsg.trim()}"\n`);
+
+        const { newMessage } = await inquirer.prompt([
+            { type: 'input', name: 'newMessage', message: 'Enter new emergency message:', default: 'Hello this is a test warning message.' }
+        ]);
+
+        if (!newMessage.trim()) {
+            printError('Message cannot be empty');
+            return;
+        }
+
+        printInfo('Updating sib8.conf...');
+        const escapedMsg = newMessage.replace(/'/g, "'\\''");
+        const cmd = `sed -i "s/^text=.*;/text=${escapedMsg};/" ~/openairinterface5g/sib8.conf`;
+
+        await sshExec(cmd, config.host);
+
+        const verify = await sshExec('cat ~/openairinterface5g/sib8.conf | grep text=', config.host);
+        printSuccess('Message updated!');
+        console.log(`  New message: "${verify.combined.match(/text=([^;]+)/)?.[1] || newMessage.trim()}"`);
+
+        const { restart } = await inquirer.prompt([
+            { type: 'confirm', name: 'restart', message: 'Restart gNB to apply new message?', default: false }
+        ]);
+
+        if (restart) {
+            printInfo('Restarting gNB...');
+            await sshExec('sudo pkill -f nr-softmodem; sleep 2', config.host);
+            await sleep(2000);
+            const gnbCmd = 'cd ~/openairinterface5g && sudo cmake_targets/ran_build/build/nr-softmodem -O targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb.sa.band78.fr1.106PRB.usrpb210.conf -d';
+            await sshExec(gnbCmd, config.host);
+            printSuccess('gNB restarted with new message!');
+        }
+    } catch (err) {
+        console.log(`\n`);
+        printError(`Error: ${err.message}`);
+    }
+
+    await inquirer.prompt([
+        { type: 'input', name: 'cont', message: 'Press Enter to continue...' }
+    ]);
+}
+
 async function openSSH(config) {
     console.clear();
     console.log(`\n  Resolving ${config.host}...\n`);
@@ -632,8 +649,7 @@ async function openSSH(config) {
     console.log(`  Opening SSH session to ${ip}...\n`);
     console.log('  Close the terminal window to return here.\n');
 
-    const cmd = `sshpass -p '${SERBER_PASS}' ssh -o StrictHostKeyChecking=no ${SERBER_USER}@${ip}`;
-    spawnTerminal(cmd);
+    spawn('open', ['-a', 'Terminal']);
 
     await inquirer.prompt([
         { type: 'input', name: 'cont', message: 'Press Enter when done with SSH...' }
@@ -658,14 +674,8 @@ async function main() {
                 case 'restart':
                     await restartNetwork(config);
                     break;
-                case 'rebuild':
-                    await rebuildCore(config);
-                    break;
-                case 'status':
-                    await checkStatus(config);
-                    break;
-                case 'ssh':
-                    await openSSH(config);
+                case 'emergency':
+                    await changeEmergencyMessage(config);
                     break;
                 case 'exit':
                     running = false;
