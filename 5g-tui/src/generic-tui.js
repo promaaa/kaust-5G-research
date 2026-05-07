@@ -561,7 +561,7 @@ async function runFullStartup(config) {
             }
             printInfo('Starting DU nr-softmodem in background...');
             try {
-                const duCmd = `sudo nohup "${ranBuildPath}/nr-softmodem" -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
+                const duCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
                 await sshExecBg(duCmd, duHost, duUser, duPassword);
                 printSuccess('DU starting in background...');
             } catch (e) {
@@ -594,7 +594,7 @@ async function runFullStartup(config) {
                 await sshExec(sedCmd, coreHost, coreUser, corePassword, 10000);
             }
 
-            const gnbCmd = `sudo nohup "${ranBuildPath}/nr-softmodem" -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > ${gnbLogFile} 2>&1 &`;
+            const gnbCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > ${gnbLogFile} 2>&1 &`;
             await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
             config.lastGnbLog = gnbLogFile;
             printSuccess('gNB starting in background...');
@@ -870,7 +870,7 @@ async function restartNetwork(config) {
             printInfo(`Starting DU on ${duHost}...`);
             try {
                 await sshExecBg(
-                    `sudo nohup "${ranBuildPath}/nr-softmodem" -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`,
+                    `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`,
                     duHost, duUser, duPassword
                 );
                 printSuccess('DU started\n');
@@ -881,7 +881,7 @@ async function restartNetwork(config) {
 
         printInfo('Starting gNB...');
         try {
-            const gnbCmd = `sudo nohup "${ranBuildPath}/nr-softmodem" -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
+            const gnbCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
             await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
         } catch (e) {
             printInfo('gNB start: ' + e.message);
@@ -944,7 +944,7 @@ async function changeEmergencyMessage(config) {
             await sshExec('sudo pkill -9 nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword);
             await sleep(2000);
             printInfo('Starting gNB...');
-            const gnbCmd = `sudo nohup "${ranBuildPath}/nr-softmodem" -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
+            const gnbCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
             await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
             printSuccess('gNB restart initiated');
         }
