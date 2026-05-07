@@ -91,6 +91,22 @@ function deleteSavedConfig() {
     }
 }
 
+function expandHomePath(path, user) {
+    if (!path) return path;
+    if (path.startsWith('~/')) {
+        return path.replace('~', `/home/${user}`);
+    }
+    return path;
+}
+
+function resolveCorePath(corePath, coreUser) {
+    return expandHomePath(corePath, coreUser);
+}
+
+function resolveRanPath(ranPath, coreUser) {
+    return expandHomePath(ranPath, coreUser);
+}
+
 function resolveHost(hostname) {
     return new Promise((resolve, reject) => {
         exec(`dscacheutil -q host -a name ${hostname}`, { timeout: 3000 }, (err, stdout) => {
@@ -148,9 +164,9 @@ function sshExecBg(cmd, host, user, password) {
             return;
         }
 
-        const sshCmd = `sshpass -p '${password}' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=2 -o ConnectionAttempts=1 -o UserKnownHostsFile=/dev/null ${user}@${ip} 'nohup ${cmd} > /dev/null 2>&1 &'`;
+        const sshCmd = `sshpass -p '${password}' ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o UserKnownHostsFile=/dev/null ${user}@${ip} 'nohup ${cmd}'`;
 
-        exec(sshCmd, { timeout: 8000 }, (err, stdout, stderr) => {
+        exec(sshCmd, { timeout: 15000 }, (err, stdout, stderr) => {
             if (err) {
                 reject(new Error(`SSH failed for ${user}@${ip}: ${err.message}`));
                 return;
@@ -419,6 +435,13 @@ async function runFullStartup(config) {
 
     const { mode, coreHost, coreUser, corePassword, corePath, duHost, duUser, duPassword, ranPath, gnbConfig, imsi } = config;
 
+    const fullCorePath = expandHomePath(corePath, coreUser);
+    const fullRanPath = expandHomePath(ranPath, coreUser);
+    const coreComposePath = fullCorePath;
+    const ranBuildPath = `${fullRanPath}/cmake_targets/ran_build/build`;
+    const gnbConfigBasePath = `${fullRanPath}/targets/PROJECTS/GENERIC-NR-5GC/CONF`;
+    const sib8Path = `${fullRanPath}/sib8.conf`;
+
     try {
         printInfo(`Connecting to ${coreHost}...`);
         await sshExec('echo "connected"', coreHost, coreUser, corePassword);
@@ -426,49 +449,78 @@ async function runFullStartup(config) {
 
         const totalSteps = isSplit ? 8 : 7;
         let step = 1;
+        let detectedUsrpSerial = null;
 
-        printStep(step, totalSteps, 'Reset USRP USB');
+        printStep(step, totalSteps, 'Detect USRP USB');
         step++;
-        printInfo('Resetting USRP USB device...');
+        printInfo('Scanning for USRP devices...');
         try {
-            await sshExec(
-                'echo "2-6" | sudo tee /sys/bus/usb/drivers/usb/unbind > /dev/null && sleep 2 && echo "2-6" | sudo tee /sys/bus/usb/drivers/usb/bind > /dev/null && sleep 3',
-                coreHost, coreUser, corePassword
-            );
-            await sleep(1000);
-            printInfo('Checking for USRP devices...');
-            const usrp = await sshExec('uhd_find_devices', coreHost, coreUser, corePassword);
-            if (usrp.combined.includes('type') || usrp.combined.includes('B')) {
-                printSuccess('USRP detected');
-                usrp.combined.split('\n').filter(Boolean).forEach(l => {
-                    if (l.includes('serial') || l.includes('name') || l.includes('product') || l.includes('type')) {
-                        console.log(`    \x1b[90m${l.trim()}\x1b[0m`);
+            const usrpCheck = await sshExec('uhd_find_devices', coreHost, coreUser, corePassword);
+            if (usrpCheck.combined.includes('type') || usrpCheck.combined.includes('B')) {
+                printSuccess('USRP detected:');
+                usrpCheck.combined.split('\n').filter(Boolean).forEach(l => {
+                    console.log(`    \x1b[90m${l.trim()}\x1b[0m`);
+                    if (l.includes('serial')) {
+                        const match = l.match(/serial:\s*(\w+)/);
+                        if (match) detectedUsrpSerial = match[1];
                     }
                 });
+
+                if (detectedUsrpSerial) {
+                    printInfo(`Detected USRP serial: ${detectedUsrpSerial}`);
+                }
+
+                printInfo('Resetting USRP USB device...');
+                try {
+                    await sshExec(
+                        'echo "2-6" | sudo tee /sys/bus/usb/drivers/usb/unbind > /dev/null && sleep 2 && echo "2-6" | sudo tee /sys/bus/usb/drivers/usb/bind > /dev/null && sleep 3',
+                        coreHost, coreUser, corePassword
+                    );
+                    await sleep(1000);
+                    printSuccess('USRP reset complete');
+                } catch (resetErr) {
+                    printInfo('USRP reset skipped (may already be running): ' + resetErr.message);
+                }
             } else {
-                printInfo('USRP reset complete');
+                printError('No USRP device found!');
+                printWarn('Please connect USRP B210 and restart.');
+                await inquirer.prompt([{ type: 'input', name: 'cont', message: '  Press Enter to exit...' }]);
+                return 'menu';
             }
         } catch (e) {
-            printInfo('USRP reset skipped: ' + e.message);
+            printError('USRP check failed: ' + e.message);
+            printWarn('Please check USRP connection and restart.');
+            await inquirer.prompt([{ type: 'input', name: 'cont', message: '  Press Enter to exit...' }]);
+            return 'menu';
         }
+
+        config.detectedUsrpSerial = detectedUsrpSerial;
 
         printStep(step, totalSteps, 'Start 5G Core Network');
         step++;
         printInfo('Cleaning up old containers...');
         try {
-            await sshExec(`cd ${corePath} && docker compose down 2>/dev/null || true`, coreHost, coreUser, corePassword);
+            await sshExec(`cd "${coreComposePath}" && docker compose down --remove-orphans 2>/dev/null || true`, coreHost, coreUser, corePassword);
             printSuccess('Old containers cleaned');
         } catch (e) {
-            printInfo('Cleanup: ' + e.message);
+            printInfo('Cleanup issue (continuing): ' + e.message);
         }
-        printInfo('Starting Docker containers...');
-        await sshExec(`cd ${corePath} && docker compose up -d`, coreHost, coreUser, corePassword);
-        printSuccess('Core containers starting...');
+        printInfo('Starting Docker containers (this may take a moment)...');
+        try {
+            await sshExec(`cd "${coreComposePath}" && docker compose up -d`, coreHost, coreUser, corePassword, 30000);
+            printSuccess('Core containers starting...');
+        } catch (e) {
+            if (e.message.includes('No such container')) {
+                printInfo('Container recreate issue (continuing)...');
+            } else {
+                throw new Error('Failed to start containers: ' + e.message);
+            }
+        }
         printInfo('Waiting for containers to initialize...');
         await sleep(20000);
 
         printInfo('Checking container status...');
-        const containers = await sshExec(`cd ${corePath} && docker compose ps`, coreHost, coreUser, corePassword);
+        const containers = await sshExec(`cd "${coreComposePath}" && docker compose ps`, coreHost, coreUser, corePassword);
         const runningContainers = containers.combined.split('\n').filter(c => c.includes('Up'));
         if (runningContainers.length > 0) {
             runningContainers.forEach(c => console.log(`    \x1b[32m✓ ${c}\x1b[0m`));
@@ -510,16 +562,14 @@ async function runFullStartup(config) {
             }
             printInfo('Starting DU nr-softmodem in background...');
             try {
-                await sshExecBg(
-                    `cd ${ranPath} && sudo nohup ./cmake_targets/ran_build/build/nr-softmodem -O ${ranPath}/targets/PROJECTS/GENERIC-NR-5GC/CONF/${gnbConfig} -E --continuous-tx`,
-                    duHost, duUser, duPassword
-                );
+                const duCmd = `cd "${ranBuildPath}" && sudo nohup ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
+                await sshExecBg(duCmd, duHost, duUser, duPassword);
                 printSuccess('DU starting in background...');
             } catch (e) {
-                throw new Error(`Failed to start DU: ${e.message}`);
+                printInfo('DU launch attempted: ' + e.message);
             }
-            printInfo('Waiting for DU to initialize...');
-            await sleep(5000);
+            printInfo('Waiting for DU to initialize (10s)...');
+            await sleep(10000);
         }
 
         printStep(step, totalSteps, 'Start gNB (nr-softmodem)');
@@ -535,16 +585,38 @@ async function runFullStartup(config) {
 
         printInfo('Launching nr-softmodem in background...');
         try {
-            await sshExecBg(
-                `cd ${ranPath}/cmake_targets/ran_build/build && sudo nohup ./nr-softmodem -O ${ranPath}/targets/PROJECTS/GENERIC-NR-5GC/CONF/${gnbConfig} -E --continuous-tx`,
-                coreHost, coreUser, corePassword
-            );
+            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+            const gnbLogFile = `/tmp/gnb-${timestamp}.log`;
+            const gnbConfigPath = `${gnbConfigBasePath}/${gnbConfig}`;
+
+            if (detectedUsrpSerial) {
+                printInfo(`Updating gNB config with USRP serial: ${detectedUsrpSerial}`);
+                const sedCmd = `sed -i s/serial=[^;]*/serial=${detectedUsrpSerial}/ ${gnbConfigPath}`;
+                await sshExec(sedCmd, coreHost, coreUser, corePassword, 10000);
+            }
+
+            const gnbCmd = `cd "${ranBuildPath}" && sudo nohup ./nr-softmodem -O "${gnbConfigPath}" -E --continuous-tx > ${gnbLogFile} 2>&1 &`;
+            await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
+            config.lastGnbLog = gnbLogFile;
             printSuccess('gNB starting in background...');
         } catch (e) {
-            throw new Error(`Failed to start gNB: ${e.message}`);
+            printInfo('gNB launch attempted: ' + e.message);
         }
-        printInfo('Waiting for gNB to initialize...');
-        await sleep(6000);
+        printInfo('Waiting for gNB to initialize (20s)...');
+        await sleep(20000);
+
+        printInfo('Checking gNB startup log...');
+        try {
+            const gnbStartLog = await sshExec(`tail -50 ${config.lastGnbLog || '/tmp/gnb.log'} 2>/dev/null || echo "Log file not found"`, coreHost, coreUser, corePassword);
+            if (gnbStartLog.combined.trim() && !gnbStartLog.combined.includes('Log file not found')) {
+                console.log('  \x1b[90m--- gNB log (first 50 lines) ---\x1b[0m');
+                gnbStartLog.combined.split('\n').filter(Boolean).slice(0, 30).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
+            } else {
+                printWarn('Could not read gNB log file');
+            }
+        } catch (e) {
+            printInfo('Log check: ' + e.message);
+        }
 
         printStep(step, totalSteps, 'Verify gNB Registration with AMF');
         step++;
@@ -563,11 +635,35 @@ async function runFullStartup(config) {
         }
 
         printInfo('Verifying gNB process is running...');
-        const gnbCheck = await sshExec('ps aux | grep nr-softmodem | grep -v grep | head -1', coreHost, coreUser, corePassword);
+        const gnbCheck = await sshExec('sudo ps aux | grep nr-softmodem | grep -v grep', coreHost, coreUser, corePassword);
         if (gnbCheck.combined.includes('nr-softmodem')) {
             printSuccess('gNB process is running');
+            printInfo('Checking if gNB is transmitting...');
+            const gnbStatus = await sshExec(`tail -30 ${config.lastGnbLog || '/tmp/gnb.log'} 2>/dev/null | grep -E "Frame\\.Slot|SIB8|transmitting|running" | tail -10`, coreHost, coreUser, corePassword);
+            if (gnbStatus.combined.includes('Frame.Slot')) {
+                printSuccess('gNB is transmitting (Frame.Slot detected)');
+            } else if (gnbStatus.combined.trim()) {
+                console.log(`  \x1b[90m${gnbStatus.combined.trim()}\x1b[0m`);
+            } else {
+                printWarn('No Frame.Slot detected - gNB may not be properly transmitting');
+            }
+
+            printInfo('Checking for SIB8/PWS activity...');
+            const sib8Check = await sshExec(`grep -i "SIB8\\|write_replace_warning\\|warning" ${config.lastGnbLog || '/tmp/gnb.log'} 2>/dev/null | tail -5`, coreHost, coreUser, corePassword);
+            if (sib8Check.combined.includes('SIB8') || sib8Check.combined.includes('warning')) {
+                printSuccess('SIB8/PWS activity detected');
+                sib8Check.combined.split('\n').filter(Boolean).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
+            } else {
+                printInfo('No SIB8/PWS messages found in log');
+            }
         } else {
             printWarn('gNB process not found');
+            printInfo('Checking gNB log for errors...');
+            const gnbLog = await sshExec(`tail -30 ${config.lastGnbLog || '/tmp/gnb.log'} 2>/dev/null || echo "No log file"`, coreHost, coreUser, corePassword);
+            if (gnbLog.combined.trim() && gnbLog.combined !== 'No log file') {
+                console.log('  Last 30 lines of gNB log:');
+                gnbLog.combined.split('\n').filter(Boolean).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
+            }
         }
 
         printStep(step, totalSteps, 'Connect UE (Nothing Phone)');
@@ -589,12 +685,24 @@ async function runFullStartup(config) {
             await sleep(3000);
             try {
                 const ue = await sshExec('docker logs oai-amf 2>&1 | grep "UEs" | tail -1', coreHost, coreUser, corePassword);
-                if (ue.combined.trim()) {
+                if (ue.combined.trim() && !ue.combined.includes('|')) {
                     printSuccess('UE Status: ' + ue.combined.trim());
+                } else if (ue.combined.includes('|')) {
+                    printInfo('AMF shows table but no UEs registered');
                 }
-                const ueImsi = await sshExec(`docker logs oai-amf 2>&1 | grep "${imsi}" | tail -3`, coreHost, coreUser, corePassword);
+
+                const ueCount = await sshExec('docker logs oai-amf 2>&1 | grep -c "REGISTERED\\|5GMM" || echo "0"', coreHost, coreUser, corePassword);
+                if (ueCount.combined.includes('0')) {
+                    printWarn('No registered UEs found in AMF logs');
+                }
+
+                printInfo('Checking for IMSI ' + imsi + ' in AMF...');
+                const ueImsi = await sshExec(`docker logs oai-amf 2>&1 | grep "${imsi}" | tail -5`, coreHost, coreUser, corePassword);
                 if (ueImsi.combined.trim()) {
+                    printSuccess('UE IMSI found in AMF:');
                     ueImsi.combined.split('\n').filter(Boolean).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
+                } else {
+                    printInfo('UE IMSI not found - phone may not be registered');
                 }
             } catch (e) {
                 printInfo('UE check: ' + e.message);
@@ -698,17 +806,21 @@ async function checkStatus(config) {
 async function stopNetwork(config) {
     printHeader('Stop Network');
 
-    const { mode, coreHost, coreUser, corePassword, corePath, duHost, duUser, duPassword } = config;
+    const { mode, coreHost, coreUser, corePassword, corePath, ranPath, duHost, duUser, duPassword } = config;
+
+    const fullCorePath = expandHomePath(corePath, coreUser);
+    const fullRanPath = expandHomePath(ranPath, coreUser);
+    const coreComposePath = fullCorePath;
 
     try {
         printInfo('Stopping gNB on core...');
-        await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword);
+        await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword, 15000);
         printSuccess('gNB stopped on core');
 
         if (mode === 'split' && duHost) {
             printInfo('Stopping DU...');
             try {
-                await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', duHost, duUser, duPassword);
+                await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', duHost, duUser, duPassword, 15000);
                 printSuccess('DU stopped');
             } catch (e) {
                 printInfo('DU stop: ' + e.message);
@@ -716,8 +828,12 @@ async function stopNetwork(config) {
         }
 
         printInfo('Stopping core containers...');
-        await sshExec(`cd ${corePath} && docker-compose down`, coreHost, coreUser, corePassword);
-        printSuccess('Core network stopped');
+        try {
+            await sshExec(`cd "${coreComposePath}" && docker compose down --remove-orphans 2>&1 || true`, coreHost, coreUser, corePassword, 30000);
+            printSuccess('Core network stopped');
+        } catch (e) {
+            printInfo('Core stop: ' + e.message);
+        }
 
         console.log('\n');
         printSuccess('Network stopped!\n');
@@ -734,28 +850,28 @@ async function restartNetwork(config) {
 
     const { mode, coreHost, coreUser, corePassword, corePath, ranPath, gnbConfig, duHost, duUser, duPassword } = config;
 
+    const fullCorePath = expandHomePath(corePath, coreUser);
+    const fullRanPath = expandHomePath(ranPath, coreUser);
+    const coreComposePath = fullCorePath;
+    const ranBuildPath = `${fullRanPath}/cmake_targets/ran_build/build`;
+    const gnbConfigBasePath = `${fullRanPath}/targets/PROJECTS/GENERIC-NR-5GC/CONF`;
+
     try {
         printInfo('Stopping existing services...');
-        await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword);
-        await sshExec(`cd ${corePath} && docker-compose down`, coreHost, coreUser, corePassword);
-
-        if (mode === 'split' && duHost) {
-            try {
-                await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', duHost, duUser, duPassword);
-            } catch { /* ignore */ }
-        }
+        await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword, 15000);
+        await sshExec(`cd "${coreComposePath}" && docker compose down --remove-orphans 2>&1 || true`, coreHost, coreUser, corePassword, 30000);
         printSuccess('Stopped\n');
 
         printInfo('Starting core network...');
-        await sshExec(`cd ${corePath} && docker-compose up -d`, coreHost, coreUser, corePassword);
-        await sleep(5000);
+        await sshExec(`cd "${coreComposePath}" && docker compose up -d`, coreHost, coreUser, corePassword, 30000);
+        await sleep(8000);
         printSuccess('Core started\n');
 
         if (mode === 'split' && duHost) {
             printInfo(`Starting DU on ${duHost}...`);
             try {
                 await sshExecBg(
-                    `cd ${ranPath} && sudo nohup ./cmake_targets/ran_build/build/nr-softmodem -O ${ranPath}/targets/PROJECTS/GENERIC-NR-5GC/CONF/${gnbConfig} -E --continuous-tx`,
+                    `cd "${ranBuildPath}" && sudo nohup ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`,
                     duHost, duUser, duPassword
                 );
                 printSuccess('DU started\n');
@@ -766,10 +882,8 @@ async function restartNetwork(config) {
 
         printInfo('Starting gNB...');
         try {
-            await sshExecBg(
-                `cd ${ranPath} && sudo nohup ./cmake_targets/ran_build/build/nr-softmodem -O ${ranPath}/targets/PROJECTS/GENERIC-NR-5GC/CONF/${gnbConfig} -E --continuous-tx`,
-                coreHost, coreUser, corePassword
-            );
+            const gnbCmd = `cd "${ranBuildPath}" && sudo nohup ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
+            await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
         } catch (e) {
             printInfo('gNB start: ' + e.message);
         }
@@ -788,12 +902,17 @@ async function changeEmergencyMessage(config) {
     console.clear();
     printHeader('Change Emergency Message');
 
-    const { coreHost, coreUser, corePassword, ranPath } = config;
+    const { coreHost, coreUser, corePassword, ranPath, gnbConfig } = config;
+
+    const fullRanPath = expandHomePath(ranPath, coreUser);
+    const sib8Path = `${fullRanPath}/sib8.conf`;
+    const gnbConfigBasePath = `${fullRanPath}/targets/PROJECTS/GENERIC-NR-5GC/CONF`;
+    const ranBuildPath = `${fullRanPath}/cmake_targets/ran_build/build`;
 
     try {
         printInfo(`Fetching current message from ${coreHost}...`);
 
-        const current = await sshExec(`cat ${ranPath}/sib8.conf`, coreHost, coreUser, corePassword);
+        const current = await sshExec(`cat "${sib8Path}"`, coreHost, coreUser, corePassword);
         const currentMsg = current.combined.match(/text=([^;]+)/)?.[1] || 'Unknown';
 
         console.log(`\n  Current message: "${currentMsg.trim()}"\n`);
@@ -809,11 +928,11 @@ async function changeEmergencyMessage(config) {
 
         printInfo('Updating sib8.conf...');
         const escapedMsg = newMessage.replace(/'/g, "'\\''");
-        const cmd = `sed -i "s/^text=.*;/text=${escapedMsg};/" ${ranPath}/sib8.conf`;
+        const cmd = `sed -i "s/^text=.*;/text=${escapedMsg};/" "${sib8Path}"`;
 
         await sshExec(cmd, coreHost, coreUser, corePassword);
 
-        const verify = await sshExec(`cat ${ranPath}/sib8.conf | grep text=`, coreHost, coreUser, corePassword);
+        const verify = await sshExec(`cat "${sib8Path}" | grep text=`, coreHost, coreUser, corePassword);
         printSuccess('Message updated!');
         console.log(`  New message: "${verify.combined.match(/text=([^;]+)/)?.[1] || newMessage.trim()}"`);
 
@@ -826,11 +945,9 @@ async function changeEmergencyMessage(config) {
             await sshExec('sudo pkill -9 nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword);
             await sleep(2000);
             printInfo('Starting gNB...');
-            await sshExec(
-                `cd ${ranPath}/cmake_targets/ran_build/build && sudo ./nr-softmodem -O ../../../targets/PROJECTS/GENERIC-NR-5GC/CONF/${config.gnbConfig} -E --continuous-tx &`,
-                coreHost, coreUser, corePassword
-            );
-            printSuccess('gNB restarted with new message!');
+            const gnbCmd = `cd "${ranBuildPath}" && sudo nohup ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
+            await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
+            printSuccess('gNB restart initiated');
         }
     } catch (err) {
         console.log('\n');
