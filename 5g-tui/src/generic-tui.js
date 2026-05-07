@@ -452,47 +452,59 @@ async function runFullStartup(config) {
 
         printStep(step, totalSteps, 'Detect USRP USB');
         step++;
-        printInfo('Scanning for USRP devices...');
+printInfo('Scanning for USRP devices...');
+        
+        let usrpCheck;
+        let hasDevice = false;
+        
         try {
-            const usrpCheck = await sshExec('uhd_find_devices', coreHost, coreUser, corePassword);
-            if (usrpCheck.combined.includes('type') || usrpCheck.combined.includes('B')) {
-                printSuccess('USRP detected:');
-                usrpCheck.combined.split('\n').filter(Boolean).forEach(l => {
-                    console.log(`    \x1b[90m${l.trim()}\x1b[0m`);
-                    if (l.includes('serial')) {
-                        const match = l.match(/serial:\s*(\w+)/);
-                        if (match) detectedUsrpSerial = match[1];
-                    }
-                });
-
-                if (detectedUsrpSerial) {
-                    printInfo(`Detected USRP serial: ${detectedUsrpSerial}`);
-                }
-
-                printInfo('Resetting USRP USB device...');
-                try {
-                    await sshExec(
-                        'echo "2-6" | sudo tee /sys/bus/usb/drivers/usb/unbind > /dev/null && sleep 2 && echo "2-6" | sudo tee /sys/bus/usb/drivers/usb/bind > /dev/null && sleep 3',
-                        coreHost, coreUser, corePassword
-                    );
-                    await sleep(1000);
-                    printSuccess('USRP reset complete');
-                } catch (resetErr) {
-                    printInfo('USRP reset skipped (may already be running): ' + resetErr.message);
-                }
-            } else {
-                printError('No USRP device found!');
-                printWarn('Please connect USRP B210 and restart.');
-                await inquirer.prompt([{ type: 'input', name: 'cont', message: '  Press Enter to exit...' }]);
-                return 'menu';
-            }
+            usrpCheck = await sshExec('sudo uhd_find_devices', coreHost, coreUser, corePassword);
+            hasDevice = usrpCheck.combined.includes('type') || usrpCheck.combined.includes('B') || usrpCheck.combined.includes('Mboards');
         } catch (e) {
-            printError('USRP check failed: ' + e.message);
-            printWarn('Please check USRP connection and restart.');
+            printInfo('Initial USRP check failed, trying reset...');
+        }
+        
+        if (!hasDevice) {
+            printInfo('Resetting USRP USB device...');
+            try {
+                await sshExec(
+                    'echo "2-6" | sudo tee /sys/bus/usb/drivers/usb/unbind > /dev/null && sleep 2 && echo "2-6" | sudo tee /sys/bus/usb/drivers/usb/bind > /dev/null && sleep 3',
+                    coreHost, coreUser, corePassword
+                );
+                await sleep(1000);
+                printSuccess('USB reset complete, rescanning...');
+                
+                try {
+                    usrpCheck = await sshExec('sudo uhd_find_devices', coreHost, coreUser, corePassword);
+                    hasDevice = usrpCheck.combined.includes('type') || usrpCheck.combined.includes('B') || usrpCheck.combined.includes('Mboards');
+                } catch (e) {
+                    printInfo('USRP still not detected after reset');
+                }
+            } catch (resetErr) {
+                printInfo('USB reset failed: ' + resetErr.message);
+            }
+        }
+        
+        if (hasDevice) {
+            printSuccess('USRP detected:');
+            usrpCheck.combined.split('\n').filter(Boolean).forEach(l => {
+                console.log(`    \x1b[90m${l.trim()}\x1b[0m`);
+                if (l.includes('serial')) {
+                    const match = l.match(/serial:\s*(\w+)/);
+                    if (match) detectedUsrpSerial = match[1];
+                }
+            });
+
+            if (detectedUsrpSerial) {
+                printInfo(`Detected USRP serial: ${detectedUsrpSerial}`);
+            }
+        } else {
+            printError('No USRP device found!');
+            printWarn('Please connect USRP B210 and restart.');
             await inquirer.prompt([{ type: 'input', name: 'cont', message: '  Press Enter to exit...' }]);
             return 'menu';
         }
-
+        
         config.detectedUsrpSerial = detectedUsrpSerial;
 
         printStep(step, totalSteps, 'Start 5G Core Network');
