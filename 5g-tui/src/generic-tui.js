@@ -525,8 +525,8 @@ async function runFullStartup(config) {
             throw new Error('Failed to start containers: ' + e.message);
         }
 
-        printInfo('Waiting 25s for containers to initialize...');
-        await sleep(25000);
+        printInfo('Waiting 20s for containers to initialize...');
+        await sleep(20000);
 
         printInfo('Checking container status...');
         try {
@@ -561,8 +561,8 @@ EOFSCRIPT`,
             coreHost, coreUser, corePassword
         );
 
-        printInfo('Waiting 25s for gNB to initialize...');
-        await sleep(25000);
+        printInfo('Waiting 20s for gNB to initialize...');
+        await sleep(20000);
 
         printStep(step, totalSteps, 'Verify gNB Connection');
         step++;
