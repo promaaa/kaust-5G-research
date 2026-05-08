@@ -452,7 +452,7 @@ async function runFullStartup(config) {
 
         printStep(step, totalSteps, 'Detect USRP USB');
         step++;
-printInfo('Scanning for USRP devices...');
+        printInfo('Scanning for USRP devices...');
         
         let usrpCheck;
         let hasDevice = false;
@@ -509,48 +509,92 @@ printInfo('Scanning for USRP devices...');
 
         printStep(step, totalSteps, 'Start 5G Core Network');
         step++;
-        printInfo('Cleaning up old containers...');
+        printInfo('Stopping any existing containers...');
         try {
-            await sshExec(`cd "${coreComposePath}" && docker compose down --remove-orphans 2>/dev/null || true`, coreHost, coreUser, corePassword);
-            printSuccess('Old containers cleaned');
+            await sshExec(`cd "${coreComposePath}" && docker compose down --remove-orphans 2>&1 || true`, coreHost, coreUser, corePassword, 30000);
         } catch (e) {
-            printInfo('Cleanup issue (continuing): ' + e.message);
+            printInfo('Stop issue (continuing): ' + e.message);
         }
-        printInfo('Starting Docker containers (this may take a moment)...');
+        await sleep(2000);
+
+        printInfo('Starting Docker containers...');
         try {
-            await sshExec(`cd "${coreComposePath}" && docker compose up -d`, coreHost, coreUser, corePassword, 30000);
+            await sshExec(`cd "${coreComposePath}" && docker compose up -d`, coreHost, coreUser, corePassword, 60000);
             printSuccess('Core containers starting...');
         } catch (e) {
-            if (e.message.includes('No such container')) {
-                printInfo('Container recreate issue (continuing)...');
-            } else {
-                throw new Error('Failed to start containers: ' + e.message);
-            }
+            throw new Error('Failed to start containers: ' + e.message);
         }
-        printInfo('Waiting for containers to initialize...');
-        await sleep(20000);
+
+        printInfo('Waiting 25s for containers to initialize...');
+        await sleep(25000);
 
         printInfo('Checking container status...');
-        const containers = await sshExec(`cd "${coreComposePath}" && docker compose ps`, coreHost, coreUser, corePassword);
-        const runningContainers = containers.combined.split('\n').filter(c => c.includes('Up'));
-        if (runningContainers.length > 0) {
-            runningContainers.forEach(c => console.log(`    \x1b[32m✓ ${c}\x1b[0m`));
-        }
-
-        printStep(step, totalSteps, 'Verify SMF Registration with NRF');
-        step++;
-        printInfo('Checking SMF registration with NRF...');
-        await sleep(5000);
         try {
-            const nrf = await sshExec('docker logs oai-smf 2>&1 | grep -i "nrf\\|register" | tail -5', coreHost, coreUser, corePassword);
-            if (nrf.combined.trim()) {
-                printSuccess('SMF registration details:');
-                nrf.combined.split('\n').filter(Boolean).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
-            } else {
-                printSuccess('SMF registered with NRF');
+            const containers = await sshExec(`docker ps --format "{{.Names}}: {{.Status}}" | grep -E "oai-|mysql"`, coreHost, coreUser, corePassword);
+            if (containers.combined.trim()) {
+                containers.combined.split('\n').filter(Boolean).forEach(c => {
+                    console.log(`    \x1b[90m${c.trim()}\x1b[0m`);
+                });
             }
         } catch (e) {
-            printInfo('SMF check: ' + e.message);
+            printInfo('Container check: ' + e.message);
+        }
+
+        printStep(step, totalSteps, 'Start gNB (nr-softmodem)');
+        step++;
+        printInfo('Stopping any existing nr-softmodem...');
+        try {
+            await sshExec('sudo pkill -9 -f nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword, 15000);
+        } catch (e) {
+            printInfo('Stop issue (continuing): ' + e.message);
+        }
+        await sleep(2000);
+
+        printInfo('Starting gNB...');
+        const gnbLogFile = '/tmp/gnb-tui.log';
+        const gnbCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > ${gnbLogFile} 2>&1 &`;
+        await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
+
+        printInfo('Waiting 25s for gNB to initialize...');
+        await sleep(25000);
+
+        printStep(step, totalSteps, 'Verify gNB Connection');
+        step++;
+
+        printInfo('Checking gNB status...');
+        try {
+            const gnbCheck = await sshExec('ps aux | grep nr-softmodem | grep -v grep | wc -l', coreHost, coreUser, corePassword);
+            if (gnbCheck.combined.includes('4') || gnbCheck.combined.includes('3')) {
+                printSuccess('gNB process running');
+            } else {
+                printWarn('Unexpected process count: ' + gnbCheck.combined.trim());
+            }
+        } catch (e) {
+            printInfo('gNB check: ' + e.message);
+        }
+
+        printInfo('Checking gNB log (Frame.Slot)...');
+        try {
+            const gnbLog = await sshExec(`tail -20 ${gnbLogFile} 2>/dev/null || echo "No log"`, coreHost, coreUser, corePassword);
+            if (gnbLog.combined.includes('Frame.Slot')) {
+                printSuccess('gNB transmitting (Frame.Slot detected)');
+            } else if (gnbLog.combined.trim() && !gnbLog.combined.includes('No log')) {
+                console.log(`  \x1b[90m${gnbLog.combined.trim()}\x1b[0m`);
+            }
+        } catch (e) {
+            printInfo('Log check: ' + e.message);
+        }
+
+        printInfo('Checking AMF connection...');
+        try {
+            const amfCheck = await sshExec('docker logs oai-amf 2>&1 | grep Connected | tail -1', coreHost, coreUser, corePassword);
+            if (amfCheck.combined.includes('Connected')) {
+                printSuccess('gNB Connected to AMF');
+            } else {
+                printWarn('gNB may not be connected to AMF');
+            }
+        } catch (e) {
+            printInfo('AMF check: ' + e.message);
         }
 
         if (isSplit && duHost) {
@@ -565,116 +609,16 @@ printInfo('Scanning for USRP devices...');
             }
             printInfo('Stopping any existing DU processes...');
             try {
-                await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', duHost, duUser, duPassword);
+                await sshExec('sudo pkill -9 -f nr-softmodem 2>/dev/null || true', duHost, duUser, duPassword);
                 await sleep(1000);
-                printSuccess('Old processes stopped');
             } catch (e) {
-                printInfo('Process stop: ' + e.message);
+                printInfo('DU stop: ' + e.message);
             }
-            printInfo('Starting DU nr-softmodem in background...');
-            try {
-                const duCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb.log 2>&1 &`;
-                await sshExecBg(duCmd, duHost, duUser, duPassword);
-                printSuccess('DU starting in background...');
-            } catch (e) {
-                printInfo('DU launch attempted: ' + e.message);
-            }
+            printInfo('Starting DU nr-softmodem...');
+            const duCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > /tmp/gnb-du.log 2>&1 &`;
+            await sshExecBg(duCmd, duHost, duUser, duPassword);
             printInfo('Waiting for DU to initialize (10s)...');
             await sleep(10000);
-        }
-
-        printStep(step, totalSteps, 'Start gNB (nr-softmodem)');
-        step++;
-        printInfo('Stopping any existing nr-softmodem processes...');
-        try {
-            await sshExec('pkill -9 nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword);
-            printSuccess('Old processes stopped');
-            await sleep(2000);
-        } catch (e) {
-            printInfo('Process stop: ' + e.message);
-        }
-
-        printInfo('Launching nr-softmodem in background...');
-        try {
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-            const gnbLogFile = `/tmp/gnb-${timestamp}.log`;
-            const gnbConfigPath = `${gnbConfigBasePath}/${gnbConfig}`;
-
-            if (detectedUsrpSerial) {
-                printInfo(`Updating gNB config with USRP serial: ${detectedUsrpSerial}`);
-                const sedCmd = `sed -i s/serial=[^;]*/serial=${detectedUsrpSerial}/ ${gnbConfigPath}`;
-                await sshExec(sedCmd, coreHost, coreUser, corePassword, 10000);
-            }
-
-            const gnbCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > ${gnbLogFile} 2>&1 &`;
-            await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
-            config.lastGnbLog = gnbLogFile;
-            printSuccess('gNB starting in background...');
-        } catch (e) {
-            printInfo('gNB launch attempted: ' + e.message);
-        }
-        printInfo('Waiting for gNB to initialize (20s)...');
-        await sleep(20000);
-
-        printInfo('Checking gNB startup log...');
-        try {
-            const gnbStartLog = await sshExec(`tail -50 ${config.lastGnbLog || '/tmp/gnb.log'} 2>/dev/null || echo "Log file not found"`, coreHost, coreUser, corePassword);
-            if (gnbStartLog.combined.trim() && !gnbStartLog.combined.includes('Log file not found')) {
-                console.log('  \x1b[90m--- gNB log (first 50 lines) ---\x1b[0m');
-                gnbStartLog.combined.split('\n').filter(Boolean).slice(0, 30).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
-            } else {
-                printWarn('Could not read gNB log file');
-            }
-        } catch (e) {
-            printInfo('Log check: ' + e.message);
-        }
-
-        printStep(step, totalSteps, 'Verify gNB Registration with AMF');
-        step++;
-        printInfo('Checking gNB registration status...');
-        await sleep(3000);
-        try {
-            const amf = await sshExec('docker logs oai-amf 2>&1 | grep -i "gnb\\|register" | tail -5', coreHost, coreUser, corePassword);
-            if (amf.combined.trim()) {
-                printSuccess('gNB registration details:');
-                amf.combined.split('\n').filter(Boolean).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
-            } else {
-                printSuccess('gNB registered with AMF');
-            }
-        } catch (e) {
-            printInfo('gNB check: ' + e.message);
-        }
-
-        printInfo('Verifying gNB process is running...');
-        const gnbCheck = await sshExec('sudo ps aux | grep nr-softmodem | grep -v grep', coreHost, coreUser, corePassword);
-        if (gnbCheck.combined.includes('nr-softmodem')) {
-            printSuccess('gNB process is running');
-            printInfo('Checking if gNB is transmitting...');
-            const gnbStatus = await sshExec(`tail -30 ${config.lastGnbLog || '/tmp/gnb.log'} 2>/dev/null | grep -E "Frame\\.Slot|SIB8|transmitting|running" | tail -10`, coreHost, coreUser, corePassword);
-            if (gnbStatus.combined.includes('Frame.Slot')) {
-                printSuccess('gNB is transmitting (Frame.Slot detected)');
-            } else if (gnbStatus.combined.trim()) {
-                console.log(`  \x1b[90m${gnbStatus.combined.trim()}\x1b[0m`);
-            } else {
-                printWarn('No Frame.Slot detected - gNB may not be properly transmitting');
-            }
-
-            printInfo('Checking for SIB8/PWS activity...');
-            const sib8Check = await sshExec(`grep -i "SIB8\\|write_replace_warning\\|warning" ${config.lastGnbLog || '/tmp/gnb.log'} 2>/dev/null | tail -5`, coreHost, coreUser, corePassword);
-            if (sib8Check.combined.includes('SIB8') || sib8Check.combined.includes('warning')) {
-                printSuccess('SIB8/PWS activity detected');
-                sib8Check.combined.split('\n').filter(Boolean).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
-            } else {
-                printInfo('No SIB8/PWS messages found in log');
-            }
-        } else {
-            printWarn('gNB process not found');
-            printInfo('Checking gNB log for errors...');
-            const gnbLog = await sshExec(`tail -30 ${config.lastGnbLog || '/tmp/gnb.log'} 2>/dev/null || echo "No log file"`, coreHost, coreUser, corePassword);
-            if (gnbLog.combined.trim() && gnbLog.combined !== 'No log file') {
-                console.log('  Last 30 lines of gNB log:');
-                gnbLog.combined.split('\n').filter(Boolean).forEach(l => console.log(`    \x1b[90m${l.trim()}\x1b[0m`));
-            }
         }
 
         printStep(step, totalSteps, 'Connect UE (Nothing Phone)');
