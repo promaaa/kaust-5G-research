@@ -448,7 +448,6 @@ async function runFullStartup(config) {
 
         const totalSteps = isSplit ? 8 : 7;
         let step = 1;
-        let detectedUsrpSerial = null;
 
         printStep(step, totalSteps, 'Detect USRP USB');
         step++;
@@ -489,15 +488,7 @@ async function runFullStartup(config) {
             printSuccess('USRP detected:');
             usrpCheck.combined.split('\n').filter(Boolean).forEach(l => {
                 console.log(`    \x1b[90m${l.trim()}\x1b[0m`);
-                if (l.includes('serial')) {
-                    const match = l.match(/serial:\s*(\w+)/);
-                    if (match) detectedUsrpSerial = match[1];
-                }
             });
-
-            if (detectedUsrpSerial) {
-                printInfo(`Detected USRP serial: ${detectedUsrpSerial}`);
-            }
         } else {
             printError('No USRP device found!');
             printWarn('Please connect USRP B210 and restart.');
@@ -505,8 +496,6 @@ async function runFullStartup(config) {
             return 'menu';
         }
         
-        config.detectedUsrpSerial = detectedUsrpSerial;
-
         printStep(step, totalSteps, 'Start 5G Core Network');
         step++;
         printInfo('Stopping any existing containers...');
@@ -525,8 +514,8 @@ async function runFullStartup(config) {
             throw new Error('Failed to start containers: ' + e.message);
         }
 
-        printInfo('Waiting 20s for containers to initialize...');
-        await sleep(20000);
+        printInfo('Waiting 15s for containers to initialize...');
+        await sleep(15000);
 
         printInfo('Checking container status...');
         try {
@@ -561,8 +550,8 @@ EOFSCRIPT`,
             coreHost, coreUser, corePassword
         );
 
-        printInfo('Waiting 20s for gNB to initialize...');
-        await sleep(20000);
+        printInfo('Waiting 15s for gNB to initialize...');
+        await sleep(15000);
 
         printStep(step, totalSteps, 'Verify gNB Connection');
         step++;
