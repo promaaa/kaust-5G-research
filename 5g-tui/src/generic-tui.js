@@ -544,7 +544,7 @@ async function runFullStartup(config) {
         step++;
         printInfo('Stopping any existing nr-softmodem...');
         try {
-            await sshExec('sudo pkill -9 -f nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword, 15000);
+            await sshExec('sudo pkill -9 -f nr-softmodem 2>/dev/null || true', coreHost, coreUser, corePassword);
         } catch (e) {
             printInfo('Stop issue (continuing): ' + e.message);
         }
@@ -552,8 +552,14 @@ async function runFullStartup(config) {
 
         printInfo('Starting gNB...');
         const gnbLogFile = '/tmp/gnb-tui.log';
-        const gnbCmd = `cd "${ranBuildPath}" && nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > ${gnbLogFile} 2>&1 &`;
-        await sshExecBg(gnbCmd, coreHost, coreUser, corePassword);
+
+        await sshExec(
+            `cat > /tmp/run-gnb.sh << 'EOFSCRIPT' && chmod +x /tmp/run-gnb.sh && bash /tmp/run-gnb.sh &
+cd "${ranBuildPath}"
+nohup sudo ./nr-softmodem -O "${gnbConfigBasePath}/${gnbConfig}" -E --continuous-tx > ${gnbLogFile} 2>&1 &
+EOFSCRIPT`,
+            coreHost, coreUser, corePassword
+        );
 
         printInfo('Waiting 25s for gNB to initialize...');
         await sleep(25000);
