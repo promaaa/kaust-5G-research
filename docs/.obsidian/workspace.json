@@ -1,0 +1,224 @@
+{
+  "main": {
+    "id": "bdef8ec1c5c5dd84",
+    "type": "split",
+    "children": [
+      {
+        "id": "d6df79569080b139",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "256776410d13be85",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Presentation/Research Progress Report 11.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Research Progress Report 11"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "ae2478becd882c75",
+    "type": "split",
+    "children": [
+      {
+        "id": "cc3bf283eef45673",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "53de5d00e47c178b",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "7eaf2ca62e4ba3ab",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "d8cc8a5a5207d672",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "a9c5904a445b8c2d",
+    "type": "split",
+    "children": [
+      {
+        "id": "d7d74efecb1bc265",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "cb02f5e5a322112b",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "Presentation/Research Progress Report 6.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for Research Progress Report 6"
+            }
+          },
+          {
+            "id": "74516a17beff5d8e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "Presentation/Research Progress Report 6.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from Research Progress Report 6"
+            }
+          },
+          {
+            "id": "d0108711afc6e091",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "4eeb230e79353802",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "21488dfc0c7fb6be",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "Presentation/Research Progress Report 6.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of Research Progress Report 6"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false,
+      "obsidian-advanced-slides:Show Slide Preview": false
+    }
+  },
+  "active": "256776410d13be85",
+  "lastOpenFiles": [
+    "Presentation/Research Progress Report 10 1.md",
+    "Presentation/Research Progress Report 11.md",
+    "Presentation/Style.md",
+    "Presentation/Research Progress Report 10.md",
+    "nvidia-forum-post.md",
+    "Presentation/Research Progress Report 5.md",
+    "References/Les Fils de l'homme.md",
+    "References/Untitled.md",
+    "References",
+    "Presentation/Recap of research progress copy.md",
+    "Presentation/Recap of research progress.md",
+    "Presentation/picture-of-setup.png",
+    "Presentation/diagram-of-setup.png",
+    "Presentation/Research Progress Report 9.md",
+    "Presentation/Research Progress Report 3.md",
+    "Presentation/mermaid-diagram.png",
+    "Presentation/Recap of research progress copy 2.md",
+    "Presentation/Research Progress Report 2.md",
+    "Presentation/Research Progress Report 4.md",
+    "Presentation/Research Progress Report 6.md",
+    "Presentation/Research Progress Report 7.md",
+    "Presentation/Research Progress Report 8.md",
+    "picture-of-setup.png",
+    "IMG_4102 1.heic",
+    "IMG_4102.heic",
+    "Other/Readings.md",
+    "Other/Notes.md",
+    "Other/imgs/create_gNB_tasks.png",
+    "Other/imgs/f1_setup_response_f1ap.png",
+    "Other/imgs/mac_rrc_dl_direct_init.png",
+    "Other/imgs/mar_rrc_dl_direct.c methods.png",
+    "Other/imgs/Pasted image 20260406184706.png",
+    "Other/imgs/Pasted image 20260406184718.png",
+    "Presentation/DU_Launch_Guide.md"
+  ]
+}
