@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>From Ground Station to Flying 5G Relay</title>
+  <meta name="description" content="A visual project recap of the OpenAirInterface 5G CU/DU split research project.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <!-- Reveal.js styles -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/black.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* Premium Design overrides */
+    :root {
+      --r-main-font: 'Inter', sans-serif;
+      --r-heading-font: 'Outfit', sans-serif;
+      --r-background-color: #0b0f19;
+      --r-main-color: #f8fafc;
+      --r-heading-color: #f8fafc;
+      --r-link-color: #38bdf8;
+      --r-selection-background-color: rgba(56, 189, 248, 0.3);
+      --r-selection-color: #f8fafc;
+    }
+
+    body {
+      background-color: #0b0f19;
+      background-image: 
+        radial-gradient(at 10% 20%, rgba(59, 130, 246, 0.05) 0px, transparent 50%),
+        radial-gradient(at 90% 80%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
+    }
+
+    .reveal {
+      font-size: 32px;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+      font-weight: 800;
+      text-transform: none;
+      letter-spacing: -0.5px;
+      margin-bottom: 20px;
+    }
+
+    .reveal h1 {
+      font-size: 2.2em;
+      line-height: 1.1;
+      background: linear-gradient(135deg, #f8fafc 40%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .reveal h2 {
+      font-size: 1.6em;
+      line-height: 1.2;
+      background: linear-gradient(135deg, #f8fafc 50%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 25px;
+    }
+
+    /* Slides containers */
+    .slide-layout {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      gap: 50px;
+      height: 520px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .slide-text {
+      flex: 1.1;
+      text-align: left;
+      font-size: 0.7em;
+      line-height: 1.5;
+      color: #94a3b8;
+    }
+
+    .slide-text p {
+      margin-bottom: 20px;
+    }
+
+    .slide-text strong {
+      color: #f8fafc;
+      font-weight: 600;
+    }
+
+    .slide-visual {
+      flex: 1.9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      background: rgba(30, 41, 59, 0.2);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      height: 440px;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .slide-visual img {
+      max-height: 100%;
+      max-width: 100%;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+
+    /* Mermaid custom styles for slides */
+    .mermaid {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .mermaid svg {
+      max-height: 100% !important;
+      max-width: 100% !important;
+      height: auto !important;
+    }
+
+    /* Slide specific styles */
+    .title-subtitle {
+      font-size: 0.6em !important;
+      color: #38bdf8 !important;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .pivot-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      width: 100%;
+    }
+
+    .pivot-card {
+      background: rgba(30, 41, 59, 0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      padding: 12px 18px;
+      text-align: left;
+      font-size: 0.5em;
+      line-height: 1.4;
+    }
+    .pivot-card:nth-child(1) { border-left: 4px solid #ef4444; }
+    .pivot-card:nth-child(2) { border-left: 4px solid #f59e0b; }
+    .pivot-card:nth-child(3) { border-left: 4px solid #38bdf8; }
+
+    .pivot-title {
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 4px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1em;
+    }
+    
+    .pivot-content {
+      color: #94a3b8;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      width: 100%;
+    }
+
+    .db-card {
+      background: rgba(16, 185, 129, 0.06);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 8px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      font-size: 0.45em;
+      color: #cbd5e1;
+    }
+
+    .db-card.validation {
+      background: rgba(245, 158, 11, 0.06);
+      border: 1px solid rgba(245, 158, 11, 0.15);
+      color: #e2e8f0;
+    }
+
+    .db-icon {
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+    .db-card .success { color: #10b981; }
+    .db-card .warn { color: #f59e0b; }
+
+    .db-badge {
+      font-size: 0.75em;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-left: auto;
+    }
+    .db-badge.done { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+    .db-badge.pending { background: rgba(245, 158, 11, 0.2); color: #fbbb24; }
+
+    .roadmap-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .roadmap-item {
+      background: rgba(30, 41, 59, 0.25);
+      border-radius: 8px;
+      padding: 10px 15px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      text-align: left;
+      font-size: 0.45em;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+    }
+
+    .rm-num {
+      background: #3b82f6;
+      color: #0b0f19;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .rm-content {
+      color: #cbd5e1;
+    }
+
+    /* Print styling overrides */
+    .pdf .reveal .slide-visual {
+      background: #111827;
+      border: 1px solid #374151;
+    }
+  </style>
+</head>
+<body>
+  <div class="reveal">
+    <div class="slides">
+
+      <!-- Slide 1 — The idea in one picture -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Project Concept</div>
+            <h2>From Ground Station to Flying 5G Relay</h2>
+            <p>Instead of carrying an entire heavy 5G base station on a drone, we <strong>separate the lightweight radio</strong> parts from the heavy computing intelligence on the ground.</p>
+            <p style="font-size: 0.95em; color: #38bdf8;"><strong>The core network brain stays safe on the ground, while the drone serves as a lightweight flying relay.</strong></p>
+          </div>
+          <div class="slide-visual">
+            <div class="mermaid">
+              graph TD
+                subgraph Ground["Ground Station"]
+                  A["Core Network + CU<br>(Heavy Computing)"]
+                end
+                subgraph Air["Drone Relay"]
+                  B["DU + USRP B210 Radio<br>(Lightweight RF Payload)"]
+                end
+                subgraph User["Emergency Area"]
+                  C["Nothing Phone User<br>(PWS Warning Alert)"]
+                end
+                A --&gt;|"WireGuard (F1-C/U)"| B
+                B -.->|"5G n78 Access Link"| C
+                style Ground fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
+                style Air fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
+                style User fill:#1e293b,stroke:#f43f5e,stroke-width:2px,color:#f8fafc
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 2 — Why this project matters -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Use Case Scenario</div>
+            <h2>Restoring 5G in Emergencies</h2>
+            <p>Temporary coverage is vital after <strong>floods, forest fires, or critical outages</strong> where ground infrastructure is destroyed.</p>
+            <p>A drone can <strong>restore emergency coverage within minutes</strong>. The engineering challenge is keeping the airborne equipment light and power-efficient without losing full 5G capabilities.</p>
+          </div>
+          <div class="slide-visual">
+            <div class="mermaid">
+              flowchart TD
+                Disaster["Disaster Event<br>(Floods, Fires, Outages)"] --&gt; Outage["Ground Towers Broken<br>(No Cellular Signal)"]
+                Outage --&gt; Rescue["Drone 5G Relay<br>(Deploys in Minutes)"]
+                Rescue --&gt; Recovery["Emergency Coverage Restored<br>(PWS Warning Sent)"]
+                style Disaster fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc
+                style Outage fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc
+                style Rescue fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
+                style Recovery fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 3 — What CU/DU split means -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Architecture Concept</div>
+            <h2>Understanding the CU/DU Split</h2>
+            <p>A standard 5G base station is separated into distinct functional layers:</p>
+            <ul>
+              <li><strong>Core Network &amp; CU</strong>: The ground-based "brain" managing user sessions, security, and protocols.</li>
+              <li><strong>DU &amp; Radio antenna</strong>: The drone-carried "relay" transmitting actual high-speed radio waves.</li>
+              <li><strong>Backhaul Link (F1)</strong>: The wireless link connecting the brain to the radio.</li>
+            </ul>
+          </div>
+          <div class="slide-visual">
+            <img src="assets/diagram-of-setup.png" alt="Simple CU/DU Split architecture diagram">
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 4 — The physical testbed -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Hardware Deployment</div>
+            <h2>Our Physical Testbed</h2>
+            <p>We built and validated a real-world benchtop setup using accessible hardware:</p>
+            <ul>
+              <li><strong>serber-firecell</strong>: Server running the 5G Core &amp; CU.</li>
+              <li><strong>serber-minipc</strong>: Remote DU unit.</li>
+              <li><strong>Raspberry Pi 5</strong>: Highly portable DU candidate.</li>
+              <li><strong>USRP B210</strong>: Software-programmable 5G antenna.</li>
+              <li><strong>Quectel Modem</strong>: Dedicated wireless backhaul link.</li>
+            </ul>
+          </div>
+          <div class="slide-visual" style="padding: 0;">
+            <img src="assets/picture-of-setup.png" alt="Physical testbed setup photograph" style="width: 100%; height: 100%; object-fit: cover;">
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 5 — Progress timeline -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Milestones Timeline</div>
+            <h2>Chronological Progress</h2>
+            <p>The system progressed systematically from software simulations to real-world wireless hardware loops.</p>
+            <p>Key achievements include connecting a <strong>commercial phone</strong>, broadcasting <strong>emergency warnings (PWS)</strong>, and implementing <strong>5G WireGuard backhauling</strong>.</p>
+          </div>
+          <div class="slide-visual">
+            <div class="mermaid">
+              flowchart LR
+                A["Simulation"] --&gt; B["Real Radio"] --&gt; C["Nothing Phone"] --&gt; D["Emergency PWS"] --&gt; E["Ethernet Split"] --&gt; F["Pi 5 DU"] --&gt; G["WiFi GRE"] --&gt; H["Quectel 5G"] --&gt; I["Target Setup"]
+                style A fill:#1e293b,stroke:#3b82f6,color:#f8fafc
+                style B fill:#1e293b,stroke:#3b82f6,color:#f8fafc
+                style C fill:#1e293b,stroke:#10b981,color:#f8fafc
+                style D fill:#1e293b,stroke:#10b981,color:#f8fafc
+                style E fill:#1e293b,stroke:#10b981,color:#f8fafc
+                style F fill:#1e293b,stroke:#10b981,color:#f8fafc
+                style G fill:#1e293b,stroke:#f59e0b,color:#f8fafc
+                style H fill:#1e293b,stroke:#f59e0b,color:#f8fafc
+                style I fill:#1e293b,stroke:#f59e0b,color:#f8fafc
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 6 — The main engineering pivots -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Hurdles &amp; Adaptations</div>
+            <h2>Engineering Pivots</h2>
+            <p>Faced with real-world hardware limits, the project shifted direction to find viable solutions:</p>
+            <p>We resolved <strong>protocol blocks, hardware overloading, and signal saturation</strong> to reach a stable prototype.</p>
+          </div>
+          <div class="pivot-grid flex-1">
+            <div class="pivot-card">
+              <div class="pivot-title">1. Tegra Kernel Roadblock</div>
+              <div class="pivot-content"><strong>Problem</strong>: Jetson Orin Nano lacked SCTP protocol support.<br><strong>Pivot</strong>: Switched to standard x86 Mini PC and Raspberry Pi 5 to gain native out-of-the-box SCTP support.</div>
+            </div>
+            <div class="pivot-card">
+              <div class="pivot-title">2. Single-Radio Overload</div>
+              <div class="pivot-content"><strong>Problem</strong>: One radio could not handle user access and backhaul at the same time.<br><strong>Pivot</strong>: Switched roles: USRP B210 serves the phone, while a Quectel 5G modem handles wireless backhaul.</div>
+            </div>
+            <div class="pivot-card">
+              <div class="pivot-title">3. Throughput Limitation Bottleneck</div>
+              <div class="pivot-content"><strong>Problem</strong>: Upgrading DU hardware strength did not remove split-mode speed limits.<br><strong>Pivot</strong>: Identified the bottleneck inside the scheduler configuration; focus moved to OAI scheduler tuning.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 7 — What works today -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Current Status</div>
+            <h2>What Works Today</h2>
+            <p>Our current system has successfully validated all key features of the split 5G architecture.</p>
+            <p>Performance optimization and final user-traffic validation over the wireless backhaul link are currently under active testing.</p>
+          </div>
+          <div class="dashboard-grid flex-1">
+            <div class="db-card"><span class="db-icon success">✓</span><span>Commercial phone registers to split 5G</span><span class="db-badge done">Done</span></div>
+            <div class="db-card"><span class="db-icon success">✓</span><span>Public Warning System (PWS/SIB8) broadcast</span><span class="db-badge done">Done</span></div>
+            <div class="db-card"><span class="db-icon success">✓</span><span>CU/DU operating as separated components</span><span class="db-badge done">Done</span></div>
+            <div class="db-card"><span class="db-icon success">✓</span><span>F1 interface tunneled over wireless path</span><span class="db-badge done">Done</span></div>
+            <div class="db-card"><span class="db-icon success">✓</span><span>Quectel 5G wireless backhaul path setup</span><span class="db-badge done">Done</span></div>
+            <div class="db-card"><span class="db-icon success">✓</span><span>Pi 5 DU timing overflows resolved</span><span class="db-badge done">Done</span></div>
+            <div class="db-card validation"><span class="db-icon warn">⚠</span><span>End-to-end backhaul speed validation</span><span class="db-badge pending">Testing</span></div>
+            <div class="db-card validation"><span class="db-icon warn">⚠</span><span>Split-mode scheduler bottleneck fix</span><span class="db-badge pending">Testing</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 8 — Current target architecture -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">System Layout</div>
+            <h2>Target Single-Core Setup</h2>
+            <p>Our unified architecture runs on a single central server:</p>
+            <ul>
+              <li><strong>serber-firecell (Ground)</strong>: Runs 5G Core, Central Unit (CU), and a donor base station.</li>
+              <li><strong>serber-minipc (Remote)</strong>: Runs DU, access radio (B210), and Quectel backhaul modem.</li>
+              <li><strong>Data Flow</strong>: User phone traffic reaches the DU, tunnels via WireGuard over the Quectel 5G link, and reaches the Core on the ground.</li>
+            </ul>
+          </div>
+          <div class="slide-visual">
+            <div class="mermaid">
+              graph TD
+                subgraph Ground["Ground Station (serber-firecell)"]
+                  Core["OAI 5G Core"]
+                  CU["OAI Central Unit (CU)"]
+                  Donor["OAI Donor Cell (gNB)<br>(PCI 1, TAC 2)"]
+                  Core --- CU
+                  Core --- Donor
+                end
+                subgraph Remote["Remote Unit (serber-minipc)"]
+                  Quectel["Quectel 5G Modem<br>(IP 10.0.0.6)"]
+                  DU["OAI Distributed Unit (DU)<br>(PCI 0, TAC 1)"]
+                  B210["USRP B210 Access Radio"]
+                  DU --- B210
+                end
+                subgraph UE["User Device"]
+                  Phone["Nothing Phone"]
+                end
+                
+                Donor -.->|"5G RF Link"| Quectel
+                Quectel == "WireGuard F1 Link" ==> CU
+                B210 -.->|"5G RF Access"| Phone
+                
+                style Ground fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
+                style Remote fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
+                style UE fill:#1e293b,stroke:#f43f5e,stroke-width:2px,color:#f8fafc
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 9 — Results and remaining bottleneck -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Metrics &amp; Benchmarks</div>
+            <h2>Performance Bottleneck</h2>
+            <p>We measured speeds across different connection styles:</p>
+            <p>While monolithic 5G achieves 150 Mbps, split mode drops to <strong>23 Mbps</strong>. Moving the DU to stronger hardware did not increase speed.</p>
+            <p style="font-size: 0.95em; color: #fb7185;"><strong>The scheduler pins transmission rates to the lowest setting (MCS 0) due to delayed channel reports.</strong></p>
+          </div>
+          <div class="slide-visual">
+            <img src="assets/performance_comparison.png" alt="Matplotlib Throughput Performance Comparison Chart">
+          </div>
+        </div>
+      </section>
+
+      <!-- Slide 10 — What is next -->
+      <section>
+        <div class="slide-layout">
+          <div class="slide-text">
+            <div class="title-subtitle">Roadmap</div>
+            <h2>What is Next</h2>
+            <p>We have moved from simulation to a real, separated 5G network with wireless backhaul.</p>
+            <p style="font-size: 0.95em; color: #34d399;"><strong>Our next challenge is making this setup fast, reproducible, and ready for drone flights.</strong></p>
+          </div>
+          <div class="roadmap-list flex-1">
+            <div class="roadmap-item">
+              <div class="rm-num">1</div>
+              <div class="rm-content"><strong>Prove Backhaul Path</strong>: Confirm phone traffic runs strictly over Quectel backhaul counters.</div>
+            </div>
+            <div class="roadmap-item">
+              <div class="rm-num">2</div>
+              <div class="rm-content"><strong>Tune Scheduler</strong>: Raise the MCS transmission speeds to break the 23 Mbps limit.</div>
+            </div>
+            <div class="roadmap-item">
+              <div class="rm-num">3</div>
+              <div class="rm-content"><strong>Package Code</strong>: Secure configurations for a fully reproducible live demo.</div>
+            </div>
+            <div class="roadmap-item">
+              <div class="rm-num">4</div>
+              <div class="rm-content"><strong>Validate Raspberry Pi 5 DU</strong>: Re-test the Pi 5 DU with the wireless backhaul loop.</div>
+            </div>
+            <div class="roadmap-item">
+              <div class="rm-num">5</div>
+              <div class="rm-content"><strong>Airborne Flight</strong>: Move the benchtop setup onto a drone for wide-area coverage tests.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Reveal.js script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+  <!-- Mermaid script from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    // Initialize Reveal.js and configure Mermaid
+    Reveal.initialize({
+      hash: true,
+      width: 1100,
+      height: 600,
+      margin: 0.05,
+      minScale: 0.2,
+      maxScale: 2.0,
+      transition: 'slide',
+      transitionSpeed: 'default',
+      controls: true,
+      progress: true,
+      center: true,
+      slideNumber: 'h.v',
+      plugins: []
+    });
+
+    Reveal.on('ready', event => {
+      mermaid.initialize({ 
+        startOnLoad: false, 
+        theme: 'dark',
+        securityLevel: 'loose',
+        flowchart: { useMaxWidth: true, htmlLabels: true }
+      });
+      mermaid.run({
+        nodes: document.querySelectorAll('.mermaid')
+      });
+    });
+
+    Reveal.on('slidechanged', event => {
+      // Re-run mermaid on active slide to avoid width calculation bugs
+      mermaid.run({
+        nodes: event.currentSlide.querySelectorAll('.mermaid')
+      });
+    });
+  </script>
+</body>
+</html>
