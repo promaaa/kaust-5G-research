@@ -17,7 +17,7 @@ To introduce the deployment, the physical testbed is composed of four primary ha
 | `serber-pi`       | Lightweight DU        | `10.76.170.94`  | Ubuntu 22.04 (pi version) |
 | Nothing Phone     | User Equipment (UE)   | Dynamic (12.1.1.2) | Android 14                |
 
-![[picture-of-setup.png]]
+![[picture-of-setup 1.png]]
 
 ## Schematics of what we are trying to achieve
 ```mermaid
