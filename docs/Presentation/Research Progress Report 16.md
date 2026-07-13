@@ -1,161 +1,207 @@
-# Synthesis for meeting: state of the art, backhaul, wiki, Ethernet MCS unlock
+# State of the art and added value
 
-**Date:** June 22, 2026
+**Date:** June 19, 2026
 **Timeline:** April 7 to July 31, 2025 (16 weeks)
 
 ---
 
 ## What changed since last update
 
-1. State of the art reviewed and project positioned: OAI testbeds, CU/DU split, wireless backhaul, PWS, and lightweight 5G already exist separately in the literature, and the project contribution is the combination in one reproducible OAI platform with heterogeneous F1 transport (Report 15).
-2. Single-B210 RF backhaul attempted: native broker served concurrent OAI access and backhaul roles, donor SIB1 decoded via native UHD, but PRACH detection on the donor is still pending (Report 16, original).
-3. Lab wiki published: six static HTML pages deployed to GitHub Pages at `promaaa.github.io/oai-cu-du-lab` with automated CI (Report 17).
-4. Ethernet CU/DU MCS floor unlocked: OAI BLER target window relaxed in the DU runtime, 89 Mbps measured phone-side, MCS up to 27 (Reports 18 and 19).
+1. Two deep-research reports synthesized into a sharper positioning of the project against the literature.
+2. The six research areas mapped in Report 15 were re-graded against the closest existing works.
+3. Each project element was scored individually for novelty and for the evidence gap that still blocks publication.
+4. The five candidate publication angles were re-evaluated and the recommended merge was made explicit.
+5. The strongest single defensible claim was restated in one sentence, with everything else tagged as preliminary.
 
 ---
 
-## Project status at a glance
+## Purpose of this report
 
-| Path | Throughput | Status | Source report |
-| --- | --- | --- | --- |
-| Monolithic | 150 to 190 Mbps | Working | 15 |
-| Ethernet CU/DU split | 89 Mbps | Working | 18, 19 |
-| Quectel WireGuard split | 42 to 50 Mbps | Working | 15 |
-| Wi-Fi GRE split | around 12 Mbps | Demonstrated historically, needs clean repetition | 15 |
-| Single-B210 RF backhaul | not measured end-to-end | Experimental, PRACH detection pending | 16 |
-| Lab wiki | live | Public, automated CI | 17 |
-| Pi 5 DU | Cutover completed | Needs OAI-specific resource profile | 15 |
+Report 15 placed the project against the literature at a high level. This report goes deeper using both deep-research documents as a structured lens, and answers a sharper question:
+
+> Which of our project elements are already covered by the state of the art, which are genuinely different, and what is the single most defensible claim we can make today?
+
+The two deep-research reports agree on a shared conclusion. Our setup is a strong engineering and integration artifact, but several elements we initially treated as novel are already documented elsewhere. The combination is what remains distinctive, and the strongest scientific claim sits in the F1 heterogeneous transport study and the MCS collapse observed during split runs.
 
 ---
 
-## State of the art and project positioning (Report 15)
+## State of the art, in six areas
 
-The work started with a survey. Six areas of prior work were mapped against the project, and the conclusion was that the contribution is not any single feature but the combination.
+The literature reviewed in the deep-research reports falls into six areas. In every area, the underlying primitive already exists; our contribution sits in the coupling and in the experimental discipline.
 
-| Area | State of the art covers | Our difference |
-| --- | --- | --- |
-| OAI testbeds | Widely used for 5G SA | We compare monolithic and split modes across transport paths |
-| CU/DU split | Implemented in OAI and O-RAN | We treat F1 transport as the experimental variable |
-| Wireless backhaul | IAB, aerial DU, satellite studied | Our paths are real OAI with SDR, modem, and packet captures |
-| PWS/SIB8 | Standardized, OAI experiments exist | Our PWS is tied to the split architecture and F1 delivery |
-| Lightweight 5G | Pi 5 explored, often with srsRAN | Our Pi 5 is an OAI DU with heterogeneous F1 transport |
-| Reproducibility | Scripts and datasets | Our TUI validates packet placement and provides rollback |
+- **OAI and open-source 5G platforms.** OAI RAN, OAI 5GC, O-RAN 7.2x split, F1, E1, and CI-CD pipelines are widely documented. Running OAI alone is not novel. Our TUI and reproducibility pipeline are the lab differentiator.
+- **CU/DU split and F1.** 3GPP Option 2 with F1-C on SCTP and F1-U on GTP-U over UDP 2153 is standardized, and OAI supports it natively. The split itself is not novel. Treating F1 transport as the experimental variable is the lab differentiator.
+- **Wireless or non-ideal midhaul.** IAB, aerial DU on OAI, NTN and satellite midhaul, and generic IP encapsulation have been studied. Our specific combination of Wi-Fi GRE plus commercial 5G plus WireGuard is rarely documented end-to-end on one platform.
+- **PWS and SIB8.** The 3GPP PWS procedure via SIB8 and the F1AP Write-Replace Warning are standardized, and recent OAI work implements alert generation and spoofing studies. Tying PWS to a real CU/DU split with transport variation is the lab differentiator.
+- **Lightweight or edge 5G.** srsRAN on Raspberry Pi 5 has been demonstrated by the Pi5G project. Running an OAI DU on Pi 5 with heterogeneous F1 is not yet profiled.
+- **Reproducibility and testbed methodology.** NIST O-RAN automation, public scripts, and datasets are valued. Our TUI combines preflight, packet placement validation, and rollback in one operator script.
 
-The performance comparison from Report 15 is the baseline the later reports measure against.
-
-| Configuration | Observed throughput | MCS behavior |
-| --- | --- | --- |
-| Monolithic | around 150 Mbps | MCS around 18 to 23 |
-| Split Ethernet, older runs | around 19 to 23 Mbps | sometimes pinned at 0 |
-| Split Wi-Fi GRE | around 12 Mbps | needs clean repeated measurement |
-| Split Quectel WireGuard | around 42 to 50 Mbps | MCS up to 27 observed |
-
-The MCS row is the seed of the Ethernet MCS unlock from Report 19. When some split runs pinned MCS at 0 while others reached 27, the puzzle was why. Report 19's answer is that the scheduler configuration, not the radio, was the binding constraint.
-
-Report 15 also flagged the remaining gaps that structured the rest of the period: controlled repetition, fixed OAI commit, fixed radio conditions, F1 timing analysis, scheduler evidence, Pi 5 resource profile, and UE-visible PWS validation.
+The right reading is that every area contains both "already done" and "our contribution". The contribution is almost always the coupling, not the primitive.
 
 ---
 
-## Single-B210 RF backhaul (Report 16, original)
-
-The motivation is to remove the cellular dependency from the lab: replace the Quectel modem with a second USRP B210 chain that carries F1 over the air, while the same B210 continues to serve the Nothing Phone as the access cell on its other chain. If this works, the lab becomes a self-contained 5G testbed with no operator-network requirement.
-
-The hardware quickly constrained the design. Two independent OAI processes cannot each open the B210; the device presents itself as a single multi-channel unit, and both chains share one local oscillator. Splitting the chains across two processes is rejected at the UHD layer. This forced a single-owner architecture: one process drives both chains, and OAI roles consume the IQ streams through a broker.
-
-A native C++ broker was developed to own both chains and serve OAI roles over local sockets. A stabilized run produced:
-
-| Counter | Access | Backhaul |
-| --- | ---: | ---: |
-| Input blocks | 30,835 | 34,960 |
-| Output blocks | 30,843 | 35,020 |
-| Timestamp gaps | 0 | 0 |
-| RX or TX queue drops | 0 | 0 |
-
-During this run, the access DU completed F1 Setup and received SIB8 while the backhaul UE attempted donor synchronization. This proves shared device ownership and concurrent OAI transport; it does not yet prove RF-carried F1.
-
-The donor downlink was decoded natively using stock `nr-uesoftmodem` directly on the MiniPC: PBCH passed, SIB1 decoded, ten PRACH attempts transmitted. The downlink reaches the MiniPC cleanly at the OAI layer. The blocker is the uplink: the donor never detected PRACH from the MiniPC. Without PRACH detection, registration cannot complete, RAR cannot be received, RRC setup cannot happen, and a PDU session cannot be established. F1 over the radio backhaul therefore remains untested end-to-end.
-
-A rfsimulator-based broker variant consistently failed the SIB1 DL-SCH CRC gate even though native UHD decoded the same SIB1, which shifted the investigation toward a device-layer integration that more closely reproduces the native USRP driver. The replacement now preserves exact RX sample counts, first-sample timestamps, B210 four-bit RX normalization, TX timestamps and burst flags, frequency corrections and retunes, RX and TX gains and bandwidth, and separate control, RX, and TX connections. Both components build against the pinned OAI commit. Native equivalence through PBCH and SIB1 on the new path is the current radio gate.
-
-Key gates from the experiment:
-
-| Gate | Status |
-| --- | --- |
-| One owner controls both B210 chains | Passed |
-| Concurrent real OAI access and backhaul clients | Passed |
-| Access F1 Setup and SIB8 while broker is active | Passed |
-| Donor PBCH through broker | Passed |
-| Donor SIB1 through native UHD | Passed |
-| Donor SIB1 through broker | Failed at DL-SCH CRC |
-| PRACH detected by donor | Not passed |
-| End-to-end RF-carried F1 | Not tested |
-| Full single-B210 PASS | Not passed |
-
----
-
-## Lab wiki publication (Report 17)
-
-Until this report, the lab had no public entry point. Operators and external readers had to clone the repository and read raw Markdown to understand the project. The wiki closes that gap with six static HTML pages hosted at `promaaa.github.io/oai-cu-du-lab`.
-
-| Page | Contents |
-| --- | --- |
-| Home | Project overview, key features, and general status |
-| Architecture | CU/DU split layouts, WireGuard tunnel, and PWS/SIB8 flow |
-| Workflows | Reference deployment, Ethernet, Wi-Fi, and Quectel split steps |
-| Hardware | Server, Raspberry Pi, B210, and phone specifications |
-| Commands | Executable commands for core, CU, DU, and traffic testing |
-| Project info | Baseline rules, testing requirements, and next milestones |
-
-The styling is dark mode with alert styles and a responsive sidebar layout. Deployment is automated through `.github/workflows/pages.yml`, which is triggered on pushes to `main` that modify `wiki/`. A lightweight Python HTTP server provides local preview before publishing.
-
-The wiki is also the natural place to surface future findings. The Ethernet MCS unlock from Report 19 should be added to the commands page once the BLER target relax is persisted in the TUI. The B210 hardware limits and the single-owner constraint from Report 16 should appear in the hardware page so future operators do not waste cycles trying to open both B210 chains from two processes.
-
----
-
-## Ethernet CU/DU MCS unlock (Reports 18 and 19)
-
-The Ethernet CU/DU split had been capped at around 22 Mbps with MCS pinned at 5, despite the same B210 reaching MCS 23 in the WireGuard split and MCS 18 to 23 in monolithic mode. The hand-off suggested the F1 path MTU was the bottleneck. The investigation went in the opposite direction.
-
-Reading the OAI source showed that the NR scheduler only bumps MCS when the exponentially filtered BLER drops below `bler_options->lower`, which defaults to 0.05 in `MACRLC_nr_paramdef.h`. The live Ethernet radio runs 22 to 35 percent round-1 HARQ retransmits under sustained traffic, well above 0.05. The scheduler therefore saw `bler > upper` on every update interval, decremented MCS, floored at the configured `dl_min_mcs = 5`, and never recovered.
-
-The fix was to relax the BLER target window to match OAI's reference band77 config. Four lines were added to the DU runtime conf inside the `MACRLCs` block:
+## Closest existing works
 
 ```yaml
-file: "/tmp/oai-tui-gnb-minipc-ethernet-runtime.conf"
-location: "serber-minipc, inside MACRLCs block"
-added_lines:
-  dl_bler_target_upper: "0.35"
-  dl_bler_target_lower: "0.25"
-  ul_bler_target_upper: "0.35"
-  ul_bler_target_lower: "0.15"
+closest_works:
+  - "Aerial DU with OAI, 2023: https://arxiv.org/html/2305.05983v3"
+  - "UL-TDoA in OAI, 2024: https://www.researchgate.net/publication/395633861"
+  - "On-demand 5G private networks using a mobile cell, 2024: https://arxiv.org/pdf/2411.06597"
+  - "Lisi et al., transparent 5G NTN over Starlink, 2024: https://www.mdpi.com/2673-8732/5/3/25"
+  - "NIST O-RAN testbed automation, 2024: https://tsapps.nist.gov/publication/get_pdf.cfm?pub_id=960654"
+  - "Experimental comparison of srsRAN and OAI on SDR, 2024: https://arxiv.org/html/2406.01485v1"
+  - "Performance analysis of full-fledged 5G SA TDD testbeds, 2024: https://arxiv.org/html/2407.02341v1"
+  - "Pi5G, lightweight 5G testbed on Raspberry Pi 5, 2024/2025: https://www.researchgate.net/publication/404659481"
+  - "Modular design and experimental evaluation of 5G mobile cell architectures, 2025: https://www.researchgate.net/publication/394397570"
+  - "dApps performance characterization in O-RAN, 2026: https://arxiv.org/html/2605.05426v1"
+  - "Elango et al., CPU-GPU frequency interactions in GPU-accelerated 5G O-RAN, 2024: https://ece.northeastern.edu/fac-ece/dkoutsonikolas/publications/ngopera26.pdf"
+  - "From Spoofing to Trust, emergency alerts testbed on OAI, 2026: https://arxiv.org/abs/2604.24404"
 ```
 
-The DU was killed and restarted using the same `kill -9` plus `setsid ./nr-softmodem` pattern the TUI uses for Ethernet startup. UE reattached via F1 Setup on the direct cable without operator action. As defense in depth, two iptables mangle rules were installed in the UPF container to clamp new TCP sessions to MSS 1360.
-
-| Metric | Before fix | After fix |
-| --- | --- | --- |
-| Dominant MCS | 5 (338 k samples) | 24 (37.9 k), 27 (41 k) |
-| Radio BLER | 22 to 35 percent | around 22 percent, inside new window |
-| Phone-side throughput | 22 Mbps (cap) | 89 Mbps |
-| Ping RTT ext-DN to UE | 2.3 seconds | 11 to 30 milliseconds |
-
-The radio was never the bottleneck. The upstream OAI defaults assumed a cleaner radio than this lab has, and the scheduler was pessimistically pinning MCS in response. The 22 Mbps figure that had been recorded as the Ethernet CU/DU ceiling was a configuration artifact, not a transport limit. Once the threshold was relaxed, the same radio reached MCS 27 with comparable HARQ, and the direct-cable Ethernet path now exceeds the WireGuard F1 path.
+No single work covers the full quartet of OAI CU/DU split, heterogeneous F1 transport, PWS over split, and Pi 5 DU. Several works cover pairs. The remaining novelty is the quartet plus the TUI plus packet placement validation.
 
 ---
 
-## Cross-cutting message
+## What is already covered by others
 
-Four reports over five days converge on a single observation: upstream OAI defaults assume a cleaner radio and a cleaner transport than this lab has, and most of the period's work has been about closing that gap.
+These items are not novel by themselves, and the next paper draft should not present them as such.
 
-The single-B210 PRACH path is blocked because the donor and the access cell are physically closer and less isolated than OAI's reference deployment expects. The Ethernet MCS path was capped because the BLER target window was set for a similar reference link. The lab wiki exists in part because no public documentation step had been taken in earlier periods. The state-of-the-art survey exists because the project needed to know which of its features were novel and which were already covered by the literature.
+```yaml
+already_known:
+  - "OAI can be used to run 5G SA testbeds"
+  - "CU/DU split over F1 exists and is supported in OAI"
+  - "F1-C uses SCTP and F1-U uses GTP-U over UDP"
+  - "Remote and wireless DU scenarios have been explored, including aerial DU"
+  - "Public warning systems and SIB8 have been studied, including on OAI"
+  - "Raspberry Pi 5 can host a 5G testbed, demonstrated with srsRAN"
+  - "Automation and reproducibility are first-class concerns in open RAN experimentation"
+  - "IAB and 3GPP-style wireless backhaul are standardized"
+```
 
-This argues for treating OAI defaults as starting points that need to be tuned per deployment, and for keeping tuning artifacts (runtime conf edits, iptables rules, broker configurations) close to the lab workflow instead of in one-off fixes.
+The fact that these elements are not novel does not weaken the project. It clarifies the level of claim that is appropriate.
+
+---
+
+## What we bring, re-evaluated element by element
+
+The deep-research reports graded each project element on originality, evidence gap, and path to publishable. We reproduce the assessment applied to our current evidence.
+
+The publishable core sits in five items: the bottleneck and MCS collapse analysis (medium to high originality, strong evidence after the BLER window finding), the F1 over Wi-Fi GRE comparison, the F1 over Quectel 5G plus WireGuard comparison, the packet placement validation as a methodological backbone, and the PWS and SIB8 path in a real CU/DU split with UE-visible delivery.
+
+The credibility and artifact support sits in six items: the multi-machine OAI CU/DU split itself, the monolithic versus split baseline, the radio and scheduler metric collection (MCS, NPRB, BLER, SNR, scheduler, F1, UPF/SMF), the Ethernet F1 baseline, the access and backhaul separation with packet evidence, and the TUI plus rollback plus LaTeX handoff.
+
+The Pi 5 as a fully profiled OAI DU is partial: the cutover is done but the sustained CPU, RAM, and thermal profile is not yet measured.
+
+The portable or drone-carried DU use case stays as future work: the architecture exists but no field test has been done.
+
+The MCS pinned at 0 observation is no longer a stand-alone finding. It is now subsumed into the bottleneck claim, since the BLER window default in `MACRLC_nr_paramdef.h` was identified as the cause and a concrete mitigation was applied.
+
+---
+
+## Five candidate publication angles, graded
+
+The deep-research documents proposed five angles. We restate them with current evidence.
+
+- **A. Reproducible OAI CU/DU testbed.** Novelty is medium. Evidence needed is a clean repo, a frozen commit, and a hardware manifest. Venue fit is strong for WiNTECH, INFOCOM CNERT, and NetSoft. Probability is high.
+- **B. F1 heterogeneous transport characterization.** Novelty is medium to high. Evidence needed is a fixed commit, fixed radio, ten or more runs per scenario, and synchronized traces. Venue fit is strong for VTC, EuCNC, and ICC or GLOBECOM workshops. Probability is medium to high.
+- **C. PWS and SIB8 over CU/DU split.** Novelty is medium to high in a niche. Evidence needed is a 3GPP normative map and per-UE validation. Venue fit is best for demo tracks and workshops. Probability is medium.
+- **D. Portable or edge DU with wireless backhaul.** Novelty is low to medium today. Evidence needed is a sustained run with CPU, RAM, and thermal profile. Venue fit is best for demo or poster, and a Pi5G comparison is required. Probability is low to medium.
+- **E. Root-cause analysis of OAI CU/DU bottleneck.** Novelty is medium to high. Evidence is now in place after the BLER window finding. Venue fit is strongest for a workshop or short paper. Probability is medium to high.
+
+The cleanest submission today merges A and B, with C as a use case and E as the central scientific story. Angle D is not yet mature enough to anchor a paper.
+
+---
+
+## Where our project actually adds value
+
+Four contributions are genuinely additive.
+
+```yaml
+added_value:
+  f1_transport_comparison:
+    what: "Ethernet, Wi-Fi GRE, and Quectel WireGuard measured under a shared protocol"
+    why_defensible: "TUI gates and packet placement validation prove the path under test"
+
+  mcs_collapse_analysis:
+    what: "MCS collapse in older Ethernet split runs, recovered through a concrete OAI scheduler parameter change"
+    why_defensible: "The change is small, documented in OAI source, and reproducible"
+
+  pws_over_split:
+    what: "F1AP Write-Replace Warning implemented in OAI and validated on a Nothing Phone"
+    why_defensible: "The path matches the 3GPP normative procedure"
+
+  reproducible_testbed:
+    what: "TUI gates, preflight, rollback, and packet placement validation in one operator script"
+    why_defensible: "The TUI runs clean-room from cold install and produces artifacts"
+```
+
+The strongest single sentence we can defend today is:
+
+> We built a reproducible OAI CU/DU split platform, characterized three heterogeneous F1 transport paths, identified and resolved an MCS collapse caused by the default scheduler BLER window, and validated a PWS warning path end-to-end on a commercial handset.
+
+That sentence is conservative, accurate, and aligned with both deep-research documents.
+
+---
+
+## What is not yet a contribution
+
+Three directions should be presented as preliminary, not as contributions.
+
+- **Single-B210 RF backhaul end-to-end.** PRACH detection on the donor is not yet passing. A device-layer integration must reach PRACH, then registration, then F1 over RF.
+- **Pi 5 as a fully profiled OAI DU.** Cutover is done, but sustained CPU, RAM, and thermal profile under several scenarios is not yet measured.
+- **Drone-carried or portable DU use case.** Concept exists, no field test. A defended emulation or a field demonstration is required.
+
+These should be carried as next-step or future-work items, not as headline claims.
+
+---
+
+## Mapping our performance numbers to the state of the art
+
+The numbers collected across Reports 7 to 14 read very differently once the state of the art is fixed in mind. Monolithic at 150 to 190 Mbps with MCS 18 to 23 is consistent with OAI monolithic baselines in the literature. The older Ethernet split ceiling of 19 to 23 Mbps with MCS pinned at 0 sat well below expectation and was correlated with the BLER window default of 0.05. After the BLER target relax, Ethernet split reached 89 Mbps phone-side with MCS 24 to 27 dominant, aligning with the WireGuard split result and confirming the radio was never the bottleneck. The Wi-Fi GRE split at about 12 Mbps needs clean repetition. The Quectel WireGuard split at 42 to 50 Mbps with MCS up to 27 is a distinctive combination in the literature and validates the architecture once path validation is in place.
+
+The single most useful insight from this mapping is that the older Ethernet split ceiling of 22 Mbps was an OAI scheduler artifact, not a transport limit. The radio was always capable of more.
+
+---
+
+## Risks, restated briefly
+
+The deep-research documents list risks that an aggressive reviewer would raise. The largest open blocker is the repetition campaign under a frozen commit and fixed radio. Without it, the performance numbers stay at the level of observations, not evidence. Radio noise confounded with transport is partially mitigated by Faraday cage work but not fully closed. The monolithic-versus-split, "integration report" perception is mitigated by framing the introduction and discussion around F1 transport pathology rather than around installation steps. PWS judged out of scope is mitigated by presenting PWS as a use case for the split testbed.
+
+---
+
+## Suggested framing for the professor meeting
+
+If asked to summarize the project in one paragraph, the following version aligns with both deep-research documents.
+
+```yaml
+framing:
+  state_of_the_art: "OAI testbeds, CU/DU split, wireless backhaul, PWS over OAI, and lightweight 5G all exist separately in the literature"
+  our_position: "We combine them into one reproducible OAI platform with packet placement validation and a TUI that enforces operator discipline"
+  strongest_claim: "F1 transport heterogeneity, measured under a fixed protocol, has visible and reproducible effects on the scheduler; the older Ethernet split ceiling of 22 Mbps was a default-configuration artifact, lifted by relaxing the BLER target window"
+  bonus_claim: "PWS over a real CU/DU split reaches a commercial handset, validating the split warning path"
+  next_step: "Run the controlled campaign with frozen commit and fixed radio, then publish a workshop paper or artifact paper"
+```
+
+---
+
+## What this report changes versus Report 15
+
+| Before (Report 15) | After (Report 16, this report) |
+| --- | --- |
+| Each project element treated as a candidate contribution | Each element graded against the state of the art and ranked |
+| Numbers presented as observations | Numbers mapped to state-of-the-art baselines and to the BLER window finding |
+| Five angles listed with rough novelty | Five angles graded with venue fit, probability, and the recommended merge |
+| Future work listed in one line | Three preliminary directions explicitly separated from contributions |
+
+This is the version of the positioning that should anchor the discussion with the professor.
 
 ---
 
 ## Next steps
 
-1. Persist the BLER target relax in the TUI (extend `prepareEthernetDuConfig()` in `scripts/oai-lab-tui` to inject `DL_BLER_TARGET_LOWER` and `DL_BLER_TARGET_UPPER` from environment variables, parallel to the existing `ACCESS_MIN_MCS` injection), so the 89 Mbps is not lost on the next operator workflow (Report 19 next-step 1).
-2. Re-measure monolithic, Ethernet split, and WireGuard split under identical conditions with a phone-side speed test, so the new ceilings replace the old ones in `docs/BASELINES.md` (Report 15 next-steps 4 to 6, Report 19 next-step 2).
-3. Resume the single-B210 backhaul investigation from the device-layer integration (Report 16 next-steps 2 to 6), starting with PRACH detection on the donor side and chain-A TX connector verification.
-4. Surface the B210 single-owner constraint and the Ethernet MCS unlock in the lab wiki's hardware and commands pages, so future operators start from the current evidence rather than rediscovering it.
+1. Lock the project framing on the merge of angles A, B, and E, with C as a use case, and update the LaTeX draft to match this report.
+2. Run the controlled repetition campaign (frozen commit, fixed radio, 10 to 20 runs per scenario) on monolithic, Ethernet split, Wi-Fi GRE split, and Quectel WireGuard split.
+3. Add the BLER target relax to the TUI so the 89 Mbps Ethernet result survives the next operator workflow.
+4. Surface the B210 single-owner constraint, the BLER window finding, and the packet placement gates in the lab wiki so future operators start from the current evidence.
+5. Continue the single-B210 RF backhaul work from the device-layer integration, with PRACH detection as the next radio gate.
+6. Decide venue with the professor after the repetition campaign: WiNTECH, INFOCOM CNERT, VTC, EuCNC, or NetSoft as primary candidates, with a demo track as fallback for the PWS path.

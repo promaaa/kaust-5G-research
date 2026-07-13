@@ -1,188 +1,118 @@
-# Ethernet CU/DU MCS floor unlocked, 89 Mbps measured
+ds
+# Downlink BLER adaptation, USRP X310 migration, and Jetson Orin Nano DU integration
 
-**Date:** June 22, 2026
+**Date:** July 2, 2026
 **Timeline:** April 7 to July 31, 2025 (16 weeks)
 
 ---
 
 ## What changed since last update
 
-1. OAI scheduler source read: `get_mcs_from_bler` in `openair2/LAYER2/NR_MAC_gNB/gNB_scheduler_primitives.c` only bumps MCS when the exponentially filtered BLER drops below `bler_options->lower`, which defaults to 0.05 in `MACRLC_nr_paramdef.h`.
-2. Live radio BLER quantified: 22 to 35 percent round-1 HARQ retransmits under sustained traffic, well above the 0.05 lower threshold, so the scheduler could not climb above the `dl_min_mcs = 5` floor.
-3. DU runtime config relaxed: added `dl_bler_target_lower = 0.25` and `dl_bler_target_upper = 0.35` inside the `MACRLCs` block, matching the values used by OAI's reference band77 config at `targets/PROJECTS/GENERIC-NR-5GC/CONF/gnb-du.sa.band77.273prb.fhi72.8x8-benetel650_650.conf`.
-4. DU restarted with the same `kill -9` plus `setsid` pattern the TUI uses: UE reattached via the direct-cable F1 path and ping RTT dropped from 2.3 seconds to 11 to 30 milliseconds.
-5. TCP MSS clamping installed inside the UPF container: two iptables mangle rules clamp new TCP sessions to MSS 1360, matching what `applyUpfMssClamping()` would install.
-6. Phone-side throughput measured at 89 Mbps: MCS distribution dominated by 24 and 27, sustained HARQ round-1 retransmits around 22 percent, comfortably inside the new BLER target window.
+1. Downlink BLER bottlenecks root cause discovered.
+2. USRP X310 access-cell migration evaluated: verified F1-C association and SIB8 path scheduling, but the required streaming bandwidth exceeded the 1 Gbps Ethernet transport limit, showing the need for a 10 Gbps path.
+3. Jetson Orin Nano platform integrated: built custom SCTP-enabled kernel and compiled OAI natively under board memory limits.
+4. Jetson DU F1-C and F1-U validated: established heartbeats with CU, corrected F1-U UDP port mapping, and verified user-plane ping connectivity to the UE IP.
+5. B210 USB transport fixed: resolved USB 2.0 speed limit by using USB-C port to enable stable 106 PRB operation at USB 3.0 speed.
+6. PWS broadcast validated on Jetson DU: rebuilt DU with the SIB8 patch, confirming successful reception of warning messages on the handset.
 
 ---
 
-## Project status summary
+## Downlink BLER analysis and mitigation
 
-| Element | Status | Notes |
-| --- | --- | --- |
-| Monolithic OAI 5G SA | Working | Around 150 to 190 Mbps |
-| CU/DU split over Ethernet | Working | 89 Mbps after BLER target relax, MCS up to 27 |
-| CU/DU split over Wi-Fi GRE | Demonstrated historically | Around 12 Mbps, needs clean repetition |
-| CU/DU split over Quectel WireGuard | Working | Around 42 to 50 Mbps, MCS up to 23 |
-| Single-B210 RF backhaul | Experimental | Broker and donor sync passed, registration not achieved |
-| Raspberry Pi 5 as DU | Cutover completed | Needs OAI-specific resource profiling |
-| TUI launch and validation | Working | Preflight, packet-path checks, PWS/SIB8, and rollback |
-| Lab wiki | Published | Six static HTML pages on GitHub Pages |
+The untuned Ethernet CU/DU split mode experienced a persistent Downlink Block Error Rate (BLER) of 22% to 35% under load. This high error rate resulted from the combination of GTP-U encapsulation overhead and the Transport Block size effect on the physical radio channel.
 
----
+When user plane traffic is routed over the F1 interface, each IP packet is encapsulated in a GTP-U tunnel, which adds 40 to 50 bytes of header overhead. In a standard network with a path MTU of 1500 bytes, this encapsulation forces IP packets to exceed the MTU, causing fragmentation. Fragmented packets suffer from increased drop rates, raising the overall BLER.
 
-## Problem: MCS pinned at the floor despite a capable radio
+To prevent fragmentation, the path MTU was raised to 9000 bytes. However, this exposed the Transport Block size effect. Without TCP MSS clamping, the TCP stack negotiated a large Maximum Segment Size based on the jumbo frame MTU. The gNB MAC layer scheduled these large segments into very large Transport Blocks on the physical radio channel (up to 14 KB at MCS 5).
 
-The same B210 access radio and antenna path that previously delivered 190 Mbps in monolithic mode and 45 Mbps at MCS 23 over WireGuard was pinned at MCS 5 in the direct-cable Ethernet CU/DU split. The hand-off attributed the gap to F1 path MTU. That was a reasonable direction to investigate, but the actual cause was one level deeper, in the OAI scheduler configuration.
+In physical wireless transmission, the probability of block corruption increases with block length. Since HARQ operates on the entire Transport Block, a single bit error causes the entire block to fail its CRC check and trigger a NACK. This inflated the real radio BLER to 22% to 35%, well above the OAI default scheduler increment threshold.
 
-| Path | Throughput | Dominant MCS |
-| --- | --- | --- |
-| Monolithic | 150 to 190 Mbps | 18 to 23 |
-| WireGuard split | around 45 Mbps | 23 |
-| Ethernet split pre-fix | around 22 Mbps | 5 |
+--- 
 
-The hand-off from the previous session asked the next agent to look at F1 path MTU and TCP MSS clamping. Both were investigated, but neither was the binding constraint.
+### Setups comparison
 
----
+The monolithic configuration bypasses GTP-U encapsulation and avoids transport MTU constraints. The physical layer Transport Blocks remain smaller, resulting in a low radio BLER. 
 
-## Root cause: default BLER target window is unreachable at the live radio
+| Mode | F1 interface | TCP MSS clamping | Typical BLER | Dominant MCS | Throughput |
+| --- | --- | --- | --- | --- | --- |
+| Monolithic | absent | not required | below 5% | 18 to 21 | 150 to 190 Mbps |
+| Split (untuned) | direct GbE | none | 22% to 35% | 5 | 12 to 22 Mbps |
+| Split (tuned) | direct GbE | MSS 1360 | around 22% | 24 to 27 | 100 Mbps peak |
 
-The OAI NR scheduler decides MCS each scheduling interval using exponentially filtered BLER with alpha 0.9. The MCS update logic:
+### Host and transport path benchmarks
 
-```c
-int new_mcs = old_mcs;
-if (bler_stats->bler < bler_options->lower && old_mcs < max_mcs && num_dl_sched > 3)
-    new_mcs += 1;
-else if (bler_stats->bler > bler_options->upper || num_dl_sched <= 3)
-    new_mcs -= 1;
-```
+The table below shows the measured handset throughput (or operational status) for each F1 transport configuration across the different DU candidate hosts in the lab.
 
-The defaults from `MACRLC_nr_paramdef.h` are `lower = 0.05` and `upper = 0.15`. With the live Ethernet radio running 22 to 35 percent round-1 HARQ retransmits under sustained traffic, the scheduler sees `bler > upper` on every update interval, decrements MCS, floors at the configured `dl_min_mcs = 5`, and never recovers.
-
-The `dl_min_mcs = 5` floor itself does not prevent MCS from rising above 5. The decrement path is what pins MCS, and the increment path requires BLER below `lower`, which is unreachable at this radio's actual error rate.
-
-This is consistent with the v2 diagnostic note in `oai-cu-du-lab/experiments/20260622_120500_eth_cu_du_throughput_recheck_v2.md`: "MCS only rises when the exponentially filtered BLER drops below 5 percent." The previous fix proposal (MSS clamping for smaller TBs) was a reasonable attempt but did not address the unreachable lower threshold directly.
+| Configuration            | serber-firecell | serber-minipc | serber-pi | serber-jetson |
+| ------------------------ | --------------- | ------------- | --------- | ------------- |
+| Monolithic               | 150 to 190 Mbps | 150 Mbps      | 23 Mbps   | not tested    |
+| Ethernet split (untuned) | not applicable  | 22 Mbps       | 2.3 Mbps  | 1.1 Mbps      |
+| Ethernet split (tuned)   | not applicable  | 89 Mbps       | 21 Mbps   | 7.3 Mbps      |
+| Quectel split (5G)       | not applicable  | 42 to 50 Mbps | 48 Mbps   | not tested    |
+| Wi-Fi GRE split          | not applicable  | 52 Mbps       | 13 Mbps   | not tested    |
 
 ---
 
-## Fix: relax the BLER target window and clamp MSS as defense in depth
+## Access-cell migration to USRP X310
 
-Two changes applied to the running lab, no stack restart required for the MSS clamp and a single DU restart for the BLER target change.
+| Component      | Value             |
+| -------------- | ----------------- |
+| Access radio   | USRP X310         |
+| Link speed     | 1 GbE             |
+| CU/core host   | `serber-firecell` |
+| DU/radio host  | `serber-minipc`   |
+| F1 transport   | Ethernet          |
 
-### Change 1: BLER target window in the DU runtime config
+### X310 bandwidth results
 
-```yaml
-file: "/tmp/oai-tui-gnb-minipc-ethernet-runtime.conf"
-location: "serber-minipc, inside MACRLCs block"
-backup: "/tmp/oai-tui-gnb-minipc-ethernet-runtime.conf.bak-before-bler-target"
-added_lines:
-  dl_bler_target_upper: "0.35"
-  dl_bler_target_lower: "0.25"
-  ul_bler_target_upper: "0.35"
-  ul_bler_target_lower: "0.15"
-```
+- **106 PRB result**: The DU reached F1/PWS/RF-ready state, but the X310 stream failed immediately with receive overflows (`ERROR_CODE_OVERFLOW`). Reducing the sample rate to `46.08 MSps` using the `-E` flag (requiring about 1.47 Gbps of raw transport throughput) also failed with overflows and RFNoC timeouts (`OpTimeout`). The fundamental bottleneck is the 1 Gbps Ethernet connection between the MiniPC and the USRP X310. Because the required streaming bandwidth exceeds the physical interface speed, a 10 Gbps Ethernet NIC and host path are required to support a 106 PRB configuration.
 
-The DU was killed and restarted using the same pattern the TUI uses for Ethernet startup: `kill -9` against the running `nr-softmodem` that matches the runtime config, then `cd /home/serber/monolithic/openairinterface5g/cmake_targets/ran_build/build && sudo -n setsid ./nr-softmodem -O <conf> --log_config.global_log_level info -E`. UE reattached via F1 Setup on the direct cable without operator action.
-
-### Change 2: TCP MSS clamp inside the UPF
-
-```yaml
-host: "serber-firecell"
-container: "oai-cn5g-minipc-oai-upf-1"
-chain: "FORWARD"
-table: "mangle"
-match_count_after_test: 713
-rules:
-  - "-o tun0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1360"
-  - "-i tun0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1360"
-```
-
-These are the exact two rules installed by the TUI's `applyUpfMssClamping()`. New TCP sessions through the UPF now negotiate MSS 1360 instead of 1460, keeping GTP-U payloads bounded. The rule was already added and now matches are accumulating (713 SYNs seen during testing).
-
-### Change 3: nothing else
-
-The MSS clamp and the BLER target relax are the only changes. Radio parameters (`att_tx = 3`, `att_rx = 12`, `pusch_TargetSNRx10 = 150`, `pucch_TargetSNRx10 = 200`, `min_rxtxtime = 6`, `sdr_addrs = "serial=8002816"`, `bands = [78]`, BWP, numerology, Docker bridge MTU 9000) are all unchanged from the pre-fix runtime.
 
 ---
 
-## Validation
+## Jetson Orin Nano DU integration
 
-### MCS distribution before and after on the same Ethernet direct-cable path
+### Kernel compilation challenges
 
-| MCS | Before fix | After fix |
-| --- | --- | --- |
-| 5 | 338230 | 12003 |
-| 6 | 0 | 1837 |
-| 7 to 9 | 0 | 11567 |
-| 10 to 15 | 0 | 10077 |
-| 16 to 22 | 0 | 39620 |
-| 23 | 0 | 10972 |
-| 24 | 0 | 37937 |
-| 25 to 26 | 0 | 8041 |
-| 27 | 0 | 41009 |
+Enabling SCTP support on the Jetson Orin Nano required compiling a custom kernel. We encountered several difficulties across multiple attempts:
 
-The scheduler now lets the radio run at 256-QAM with high code rate whenever the filtered BLER drops below the new lower threshold of 0.25.
+1. **Board Support Package source matching**: Initial compilation attempts using generic kernel sources failed because the Jetson Orin Nano requires the exact NVIDIA L4T BSP source code matching the running OS release (`R36.4.4` / JetPack 6.2).
+2. **Proprietary out-of-tree drivers**: The Jetson BSP relies on out-of-tree drivers (including `nvgpu`, display controller, audio). Compiling only the main kernel source led to a bootable kernel but a broken system state where the display manager crashed and GPU acceleration was unavailable.
+3. **Module symbol conflicts**: The out-of-tree modules must be compiled against the exact same kernel headers. Mismatched kernel versions or a missing `CONFIG_LOCALVERSION` configuration caused symbol mismatch errors on boot.
+4. **Native build memory bottlenecks**: To avoid cross-compiling toolchain mismatches, we compiled natively on the Jetson board. This frequently crashed due to RAM exhaustion (8GB limit), which was resolved by creating a temporary swap space and constraining compiler parallelization with `make -j4`.
+5. **Safe dual-boot recovery path**: A custom `initrd` and boot entry in `/boot/extlinux/extlinux.conf` were configured to allow fallback booting into the default stock kernel via a serial console.
 
-### Live radio metrics during sustained ping flood
+### Jetson configuration and runtime tuning
 
-| Metric | Value |
+| Setting | State |
 | --- | --- |
-| RSRP | -89 to -96 dBm |
-| PH | 48 to 61 dB |
-| PCMAX | 22 dBm |
-| Cumulative HARQ round-1 retransmits | around 22 percent |
-| Ping RTT minipc to firecell | 0.18 ms |
-| UE ping RTT ext-DN to UE | 11 to 30 ms (down from 2.3 s) |
-| Scheduler `limit` field | `bler` (no longer `mcs_table` or `dl_max_mcs`) |
+| Jetson power mode | `MAXN_SUPER` |
+| `jetson_clocks` | enabled |
+| CPU governors | `performance` |
+| CPU idle states | disabled |
+| USB autosuspend | disabled |
+| `usbfs_memory_mb` | `1000` |
+| B210 USB speed | `5000M` |
+| DU CPU affinity | CPUs `1-5` |
+| USB IRQ affinity | CPU `0` |
 
-### End-to-end throughput with phone-side measurement
+### USB link-speed fix
 
-```yaml
-throughput_measurement:
-  method: "phone-side speed test against internet-bound traffic"
-  value_mbps: 89
-  mcs_dominant: [24, 27]
-  bler_target_window: "0.25 to 0.35"
-  config: "direct Ethernet cable, MSS clamp at 1360, no Quectel"
-```
+The B210 initially enumerated on the Jetson as a USB 2.0 device at `480M` speed, which caused continuous UHD receive overflows (`ERROR_CODE_OVERFLOW`) at the `46.08 MSps` streaming rate. The issue was resolved by connecting the B210 via a USB 3.0 hub to the Jetson USB-C port, allowing it to correctly operate at `5000M` speed.
 
-The previous agent diagnostics flagged "no phone-side iperf3 server, no synchronized speed test available" as the reason throughput could not be measured precisely. That constraint was removed by the operator with a real phone-side speed test against the live Ethernet split.
+### User-plane and PWS validation
 
----
-
-## Comparison to baseline
-
-| Path | Pre-fix | After fix |
-| --- | --- | --- |
-| Ethernet CU/DU split | around 22 Mbps, MCS pinned at 5 | 89 Mbps, MCS up to 27 |
-| WireGuard CU/DU split | around 45 Mbps, MCS up to 23 | not re-measured |
-| Monolithic | around 150 to 190 Mbps | not re-measured |
-
-The Ethernet direct-cable path now exceeds the WireGuard F1 path. This is consistent with the radio being the actual bottleneck all along and the F1 transport being a thin wrapper that should not gate throughput once the scheduler is configured correctly. The previous "jumbo frames help" hypothesis was directionally right but did not address the binding constraint.
-
----
-
-## Rollback
-
-To revert to the pre-fix state, two reversals:
-
-```yaml
-du_runtime:
-  restore_from: "/tmp/oai-tui-gnb-minipc-ethernet-runtime.conf.bak-before-bler-target"
-  action: "kill -9 the current nr-softmodem, restart with the restored config"
-
-upf_mss_clamp:
-  rule_1: "iptables -t mangle -D FORWARD -o tun0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1360"
-  rule_2: "iptables -t mangle -D FORWARD -i tun0 -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --set-mss 1360"
-```
-
-After rollback the MCS distribution collapses back to floor 5 and throughput returns to the previous 22 Mbps ceiling. The runtime edit is also lost on the next TUI restart because `prepareEthernetDuConfig()` regenerates the file from the original `gnb-minipc.conf` template, so the change must be persisted in the TUI to survive normal operator workflow.
+- **F1-C & F1-U Ok**: Confirmed by packet capture between the Jetson DU and the CU.
+- **SIB8 PWS warning**: Rebuilt the DU binary with the SIB8/PWS patch to handle procedure code `20` (`F1AP_WRITE_REPLACE_WARNING`).
+- **Internet Ok**: Connection verified but no speedtest
 
 ---
 
 ## Next steps
 
-1. Persist the BLER target relax in the TUI: extend `prepareEthernetDuConfig()` in `oai-cu-du-lab/scripts/oai-lab-tui` to inject `DL_BLER_TARGET_LOWER` and `DL_BLER_TARGET_UPPER` from environment variables, parallel to the existing `ACCESS_MIN_MCS` injection, then update `oai-cu-du-lab/patches/performance/ethernet-jumbo-frames-persistent.md` and `oai-cu-du-lab/docs/BASELINES.md` with the new defaults.
-2. Re-measure WireGuard and monolithic under identical conditions to confirm whether the 89 Mbps figure is the new Ethernet ceiling or whether further gain is possible with the same MSS clamp and BLER target applied.
-3. Verify that the OAI build ships with the `dl_bler_target_*` keys parsed correctly so the change does not depend on the lab-side runtime edit. Spot-check a clean rebuild.
-4. Update the public wiki's commands page with the new runtime config snippet and the UPF iptables rule pair, and add a short note on the lab wiki architecture page about the BLER target window as the actual binding constraint.
+1. Benchmark all the configurations on the serber-jetson
+2. Dimension the drone/battery according to the current chosen config
+3. Doc
+
+
+Now that everything is done, I would like to dimension the actual configuration of what we need for each real drone implementation: battery, usrp mini, quectel board, than that gives us the weight, and we know which drone to pick. I want you to actually implement mathematic formulas so we can easily change the configuration, based on the pc, or what we want to embark and propose several drones depending on the configuration we want to use.

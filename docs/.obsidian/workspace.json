@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Presentation/Présentation Charlotte.md",
+                "file": "Presentation/Research Progress Report 19.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Présentation Charlotte"
+              "title": "Research Progress Report 19"
             }
           },
           {
@@ -27,16 +27,58 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Presentation/Research Progress Report 13.md",
+                "file": "Presentation/Research Progress Report 20.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Research Progress Report 13"
+              "title": "Research Progress Report 20"
+            }
+          },
+          {
+            "id": "8c75baed44ff131d",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Presentation/Research Progress Report 21.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Research Progress Report 21"
+            }
+          },
+          {
+            "id": "a40f18264ee9d33e",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Research Progress.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Research Progress"
+            }
+          },
+          {
+            "id": "6ee8afc077cdc94b",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Research Progress.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Research Progress"
             }
           }
         ],
-        "currentTab": 1
+        "currentTab": 4
       }
     ],
     "direction": "vertical"
@@ -93,8 +135,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "right": {
     "id": "a9c5904a445b8c2d",
@@ -110,7 +151,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "Presentation/Research Progress Report 6.md",
+                "file": "Presentation/Research Progress Report 17.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -120,7 +161,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for Research Progress Report 6"
+              "title": "Backlinks for Research Progress Report 17"
             }
           },
           {
@@ -200,49 +241,53 @@
       "obsidian-advanced-slides:Show Slide Preview": false
     }
   },
-  "active": "6f29c0275d431053",
+  "active": "6ee8afc077cdc94b",
   "lastOpenFiles": [
-    "Pasted image 20260607105147.png",
-    "Diagramme sans nom.drawio.png",
-    "Presentation/faraday_cage_setup.pdf",
-    "Presentation/faraday_cage_setup.png",
-    "Presentation/faraday_cage_diagram.py",
-    "Presentation/Présentation Charlotte.md",
-    "Pasted image 20260604093732.png",
-    "Presentation/performance_comparison.png",
-    "Presentation/Research Progress Report 9.md",
-    "Presentation/Research Progress Report 11.md",
-    "Presentation/Research Progress Report 12.md",
+    "Presentation/Research Progress Report 19.md",
+    "Presentation/Research Progress Report 20.md",
+    "Presentation/Research Progress Report 22.md",
+    "Research Progress.md",
+    "Presentation/Research Progress Report 21.md",
+    "Presentation/Style.md",
+    "Presentation/Research Progress Report 18.md",
+    "Presentation/Research Progress Report 17.md",
+    "Presentation/Research Progress Report 16.md",
+    "Other/paper/Portable_Embedded_Deployment_of_5G_Standalone_SA_System_with_Software-Defined_Radio.pdf",
+    "Other/paper/2305.05983v3.pdf",
     "Presentation/Research Progress Report 13.md",
-    "picture-of-setup.png",
-    "Presentation/picture-of-setup.png",
+    "Other/paper/3495243.3558750.pdf",
+    "Other/paper/skyran-conext18.pdf",
+    "Other/paper/publi-5492.pdf",
+    "Presentation/Présentation Charlotte.md",
+    "Presentation/Research Progress Report 15.md",
+    "Presentation/Research Progress Report 14.md",
+    "Pasted image 20260623103127.png",
+    "Presentation/throughput_chart.py",
+    "Presentation/img/throughput_chart.png",
+    "Presentation/img/throughput_chart 1.png",
+    "Presentation/img/picture-of-setup.png",
+    "Presentation/img/picture-of-setup 1.png",
+    "Presentation/img/performance_comparison.png",
+    "Presentation/img/diagram-of-setup.png",
+    "Presentation/img/Pasted image 20260616095439.png",
+    "Presentation/img/Pasted image 20260613123802.png",
+    "Presentation/img/Pasted image 20260613122948.png",
+    "Presentation/img",
+    "Presentation/Présentation Charlotte V2.md",
+    "Presentation/Présentation Charlotte 2.md",
+    "Notes/next-agent-quectel-throughput-investigation.md",
+    "Presentation/Recap of research progress.md",
+    "Presentation/Research Progress Report 9.md",
+    "Presentation/Research Progress Report 8.md",
+    "Presentation/Research Progress Report 11.md",
+    "Presentation/Research Progress Report 10.md",
+    "Research Pr.md",
+    "Presentation/Research Progress Report 12.md",
+    "Presentation/faraday_cage_setup.pdf",
+    "Presentation/faraday_cage_diagram.py",
     "References/Les Fils de l'homme.md",
     "Presentation/Recap of research progress copy.md",
-    "Presentation/Recap of research progress.md",
-    "Presentation/diagram-of-setup.png",
-    "Other/paper/Portable_Embedded_Deployment_of_5G_Standalone_SA_System_with_Software-Defined_Radio.pdf",
-    "Other/paper/3495243.3558750.pdf",
     "Presentation/Research Progress Report 2.md",
-    "IMG_4345.jpg",
-    "IMG_4346.jpg",
-    "Presentation/Research Progress Report 10.md",
-    "Presentation/Research Progress Report 5.md",
-    "Presentation/Research Progress Report 6.md",
-    "Presentation/Research Progress Report 7.md",
-    "Presentation/Research Progress Report 10 1.md",
-    "Presentation/Style.md",
-    "nvidia-forum-post.md",
-    "References/Untitled.md",
-    "References",
-    "Presentation/Research Progress Report 3.md",
-    "Presentation/mermaid-diagram.png",
-    "Presentation/Recap of research progress copy 2.md",
-    "Presentation/Research Progress Report 4.md",
-    "Presentation/Research Progress Report 8.md",
-    "IMG_4102 1.heic",
-    "IMG_4102.heic",
-    "Other/Readings.md",
-    "Other/Notes.md",
-    "Presentation/DU_Launch_Guide.md"
+    "References"
   ]
 }
