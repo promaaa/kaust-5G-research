@@ -41,8 +41,6 @@ hypotheses.
 
 | Path | Purpose |
 | --- | --- |
-| [`PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) | Architecture, milestones, and consolidated project status |
-| [`PWS_PROCEDURE.md`](PWS_PROCEDURE.md) | Laboratory procedure for the isolated PWS testbed |
 | [`reports/`](reports/README.md) | Chronological reports, one French presentation, and supporting assets |
 | [`technical-notes/`](technical-notes/README.md) | Terminology, F1 configuration notes, and informal reading notes |
 | [`REFERENCES.md`](REFERENCES.md) | Curated literature list with original-source links |
