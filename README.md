@@ -56,6 +56,11 @@ python3 -m http.server --directory visual-project-recap 8000
 
 Then open `http://localhost:8000`.
 
+Related Google Slides presentations used for this project:
+
+- [Présentation Charlotte V2](https://docs.google.com/presentation/d/1PTyXXZYdgLUkJzEHDRDvrb-UP5atUvs2Kw81VID5y84/edit?slide=id.g3ec4f7470cd_0_76#slide=id.g3ec4f7470cd_0_76)
+- [Présentation stage](https://docs.google.com/presentation/d/1-PejsoKiz7iE7Y6ZO_rdnELiBxwlDJI5kkbP2ylJjug/edit?slide=id.g3ec4f7470cd_0_76#slide=id.g3ec4f7470cd_0_76)
+
 The repository root can also be opened as an Obsidian vault. Install Advanced
 Slides separately if you want to render the French slide-oriented Markdown
 source; no editor plugin code or local settings are stored here.
