@@ -64,15 +64,3 @@ Related Google Slides presentations used for this project:
 The repository root can also be opened as an Obsidian vault. Install Advanced
 Slides separately if you want to render the French slide-oriented Markdown
 source; no editor plugin code or local settings are stored here.
-
-## Responsible use
-
-This work uses software-defined radio equipment. Operate only with suitable
-shielding or authorization, approved frequencies and power levels, and local
-regulatory and institutional permission. Never test public-warning behavior on
-a live public network.
-
-## Licensing
-
-No public-use license has been selected yet. Until the copyright holder confirms
-one, normal copyright restrictions apply.
