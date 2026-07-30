@@ -2,7 +2,7 @@
 
 **Date:** April 30, 2026
 **Author:** Research Team
-**Timeline:** April 7 – July 31, 2025 (16 weeks)
+**Timeline:** April 7 – July 31, 2026 (16 weeks)
 
 ---
 
@@ -105,15 +105,15 @@ docker-compose -f ~/oai-cn5g/docker-compose.yaml restart oai-amf
 ### 4.1 Connecting to serber-firecell
 
 ```bash
-ssh root@192.168.70.132
-# Password: root4SERBER
+ssh <lab-user>@<core-host>
 ```
+
+Authentication uses an SSH key or the lab's approved credential manager.
 
 ### 4.2 Connecting to serber-minipc (Reference Machine)
 
 ```bash
-ssh root@10.76.170.45
-# Password: root4SERBER
+ssh <lab-user>@<reference-host>
 ```
 
 ---
@@ -341,7 +341,7 @@ sudo nohup ./nr-softmodem -O ~/openairinterface5g/targets/PROJECTS/GENERIC-NR-5G
 |-------|-------|------------|
 | Patch application failed | Repository had uncommitted modifications | Ran `git reset --hard` before applying patch |
 | USRP not detected | USB connection not established | Reset USB with unbind/bind procedure |
-| SIM not in database | Nothing Phone SIM not registered | Added IMSI 001010000059449 to database |
+| SIM not in database | Nothing Phone SIM not registered | Added IMSI <ue-imsi> to database |
 | AMF tried PDU session before SMF ready | Timing issue | Waited for SMF to fully register with NRF |
 | gNB crashes | Various causes (memory, config) | Restart gNB; check logs for root cause |
 

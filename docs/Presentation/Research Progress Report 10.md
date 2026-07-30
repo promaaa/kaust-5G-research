@@ -1,5 +1,7 @@
 **Date:** May 19, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+# Wi-Fi GRE F1 backhaul and PWS/SIB8 validation
+
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 
@@ -7,7 +9,7 @@
 
 1. WiFi GRE backhaul transported F1-C and F1-U over wifi between CU and DU, replacing the ethernet link
 2. WiFi GRE tunnel a
-3. achieved ~12 MB/s UE throughput, roughly 60% of the ethernet baseline
+3. achieved ~12 Mbps UE throughput, roughly 60% of the ethernet baseline
 4. Monolithic gNB plus nrUE tested end-to-end over USRP B210 on band n78
 5. Full internet access over 5G NR validated with no ethernet or WiFi in the data path
 6. Code modification of the transmission of SIB8
@@ -74,7 +76,7 @@ The 383 MB TX from firecell and 385 MB RX at minipc was almost entirely F1-U (GT
 
 | Metric        | Ethernet F1     | WiFi GRE Backhaul |
 | ------------- | --------------- | ----------------- |
-| UE throughput | 19–23 MB/s      | ~12 MB/s          |
+| UE throughput | 19–23 Mbps      | ~12 Mbps          |
 | DL BLER       | 0.05%           | ~0.06–0.12%       |
 | UL BLER       | 0%              | 0%                |
 | F1 SCTP       | Connected       | Connected         |
@@ -115,7 +117,7 @@ Can a PC running OAI nrUE with only a USRP B210 receive a real IP connection and
 
 gNB logs confirmed: UE detected via PRACH, RRC Setup and Reconfiguration Complete, NGAP Initial UE Message, PDU Session Resource Setup, GTP-U tunnel created.
 
-AMF container logs confirmed: Registration Request from SUPI 001010000059449, 5GMM REGISTERED, PDU session establishment accept sent.
+AMF container logs confirmed: Registration Request from SUPI <ue-imsi>, 5GMM REGISTERED, PDU session establishment accept sent.
 
 UE logs confirmed: Cell synchronization achieved, RRC connection established, NAS Registration Accept received, PDU session accepted, tunnel interface `oaitun_ue1` created with IP address 10.0.0.x.
 

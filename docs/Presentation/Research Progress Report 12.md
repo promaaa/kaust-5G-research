@@ -1,7 +1,7 @@
 # OAI CU/DU Split Progress: Bottleneck, Wireless Backhaul, and Pi DU
 
 **Date:** June 1, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 

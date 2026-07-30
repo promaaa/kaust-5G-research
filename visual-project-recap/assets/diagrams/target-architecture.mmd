@@ -1,0 +1,29 @@
+flowchart LR
+    subgraph Ground["Ground node"]
+        Core["OAI 5G Core"]
+        CU["OAI CU"]
+        Donor["Donor gNB"]
+        Core --- CU
+        Core --- Donor
+    end
+
+    subgraph Payload["Airborne payload"]
+        Modem["Quectel 5G modem"]
+        DU["Embedded OAI DU"]
+        SDR["Access SDR"]
+        DU --> SDR
+    end
+
+    UE["Commercial 5G UE"]
+
+    Donor -. "5G donor link" .-> Modem
+    Modem == "WireGuard F1-C / F1-U" ==> CU
+    SDR -->|"5G NR access"| UE
+
+    classDef ground fill:#172554,stroke:#3b82f6,color:#f8fafc,stroke-width:2px;
+    classDef payload fill:#064e3b,stroke:#10b981,color:#f8fafc,stroke-width:2px;
+    classDef user fill:#4c0519,stroke:#f43f5e,color:#f8fafc,stroke-width:2px;
+    class Core,CU,Donor ground;
+    class Modem,DU,SDR payload;
+    class UE user;
+

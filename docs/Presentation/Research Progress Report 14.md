@@ -1,7 +1,9 @@
 s# TUI capabilities and demonstration plan
 
 **Date:** June 16, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+# Reproducible deployment tooling and transport baselines
+
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 
@@ -60,7 +62,7 @@ The operator console is a single dependency-free Node.js script:
 
 **Main menu actions**
 
-![[Pasted image 20260613122740.png]]
+![Hardware discovery view](img/Pasted%20image%2020260613122740.png)
 
 
 ### Hardware discovery
@@ -98,7 +100,7 @@ The following workflows remain in the script but are hidden from the main operat
 
 ## Gate sequences
 
-![[Pasted image 20260613122948.png]]
+![PWS message manager](img/Pasted%20image%2020260613122948.png)
 
 The Ethernet startup action gates the run in this order:
 
@@ -118,7 +120,7 @@ The Ethernet startup action gates the run in this order:
 The Ethernet scenario prints **PASS** only after F1 setup, SIB8/PWS delivery, DU radio sync, F1-C SCTP on the discovered Ethernet interfaces, and no F1-C or F1-U leakage on WiFi, Quectel, or WireGuard interfaces are visible.
 
 ---
-![[Pasted image 20260607105147.png]]
+![Experiment helper view](img/Pasted%20image%2020260607105147.png)
 
 The monolithic scenario prints **PASS** only after these gates pass:
 
@@ -133,7 +135,7 @@ The monolithic scenario prints **PASS** only after these gates pass:
 
 **Caged Quectel F1 backhaul**
 
-![[Pasted image 20260613123802.png]]
+![Preflight gate results](img/Pasted%20image%2020260613123802.png)
 The Quectel scenario gates the run in this order:
 
 1. Hardware preflight
@@ -164,7 +166,7 @@ The UE and F1-U gate gives the operator three phone-traffic attempts. If no `UDP
 
 ## Throughput baselines by configuration
 
-![Throughput by configuration](throughput_chart%201.png)
+![Throughput by configuration](img/throughput_chart%201.png)
 
 Short justification: Ethernet should normally be the faster and cleaner backhaul than a 5G/WireGuard path. The 42 Mbps Quectel result show that the Quectel launch escaped the old split-mode bottleneck. The access radio stayed the same, but the clean launch moved F1 onto `wg-quectel-f1`, refreshed routes/WireGuard state, and avoided stale scheduler or feedback state. The live DU log confirms this: unlike older Ethernet split runs where DL MCS was pinned at `0`, the Quectel run climbed to high DL MCS values, including `MCS 27`.
 
@@ -180,7 +182,7 @@ Short justification: Ethernet should normally be the faster and cleaner backhaul
 
 A LaTeX document was started at to consolidate the deployment history, current hardware topology, reproducible operating procedures, validation rules, and measured results. The document will be structured as a technical handoff intended for a new intern and as a basis for a future research paper.
 
-![[Pasted image 20260616095439.png]]
+![Deployment interface](img/Pasted%20image%2020260616095439.png)
 
 
 

@@ -1,7 +1,9 @@
 	 # Quectel modem backhaul for CU and DU split
 
 **Date:** May 29, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+# Quectel 5G/WireGuard F1 backhaul bring-up
+
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 

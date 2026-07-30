@@ -1,55 +1,110 @@
+#!/usr/bin/env python3
+"""Regenerate the recap deck's best-observed throughput chart."""
+
+import argparse
+from pathlib import Path
+
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import numpy as np
 
-# Set dark background style parameters to match the slate theme
-plt.rcParams['figure.facecolor'] = '#0b0f19'
-plt.rcParams['axes.facecolor'] = '#0f172a'
-plt.rcParams['text.color'] = '#f8fafc'
-plt.rcParams['axes.labelcolor'] = '#94a3b8'
-plt.rcParams['xtick.color'] = '#94a3b8'
-plt.rcParams['ytick.color'] = '#94a3b8'
-plt.rcParams['font.family'] = 'sans-serif'
-plt.rcParams['font.sans-serif'] = ['Inter', 'DejaVu Sans', 'Arial']
 
-# Data
-categories = [
-    'Transport 5G Quectel\n(Double liaison sans fil)',
-    'Liaison nrUE isolée\n(Test 5G USRP à USRP)',
-    'Tunnel GRE sur Wi-Fi\n(Liaison F1 sans fil)',
-    'Séparation Ethernet\n(Câble Gigabit - bridé)',
-    '5G monolithique\n(Référence sur PC unique)'
+DEFAULT_OUTPUT = Path(__file__).resolve().parent / "performance_comparison.png"
+
+CATEGORIES = [
+    "Quectel 5G F1\nbackhaul",
+    "Wi-Fi GRE\nF1 backhaul",
+    "Tuned Ethernet\nCU/DU split",
+    "Monolithic\nreference",
 ]
-throughput = [3.1, 8.6, 12.0, 23.0, 150.0]
-colors = ['#f43f5e', '#f59e0b', '#eab308', '#3b82f6', '#10b981']
+THROUGHPUT = [78.0, 52.0, 100.0, 190.0]
+COLORS = ["#f43f5e", "#a855f7", "#3b82f6", "#10b981"]
 
-fig, ax = plt.subplots(figsize=(10, 5), dpi=300)
 
-# Create horizontal bar chart
-bars = ax.barh(categories, throughput, color=colors, height=0.6, edgecolor='none')
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=DEFAULT_OUTPUT,
+        help=f"output PNG path (default: {DEFAULT_OUTPUT})",
+    )
+    return parser.parse_args()
 
-# Add titles and labels
-ax.set_title('Comparaison du débit selon le mode de déploiement', fontsize=14, fontweight='bold', pad=20, color='#f8fafc')
-ax.set_xlabel('Débit de l\'utilisateur (Mbps)', fontsize=11, labelpad=10)
 
-# Configure grids
-ax.xaxis.grid(True, linestyle='--', alpha=0.15, color='#e2e8f0')
-ax.set_axisbelow(True)
+def main() -> None:
+    args = parse_args()
+    output = args.output.resolve()
+    output.parent.mkdir(parents=True, exist_ok=True)
 
-# Remove spines
-for spine in ['top', 'right', 'left', 'bottom']:
-    ax.spines[spine].set_visible(False)
+    plt.rcParams.update(
+        {
+            "figure.facecolor": "#0b0f19",
+            "axes.facecolor": "#0f172a",
+            "text.color": "#f8fafc",
+            "axes.labelcolor": "#94a3b8",
+            "xtick.color": "#94a3b8",
+            "ytick.color": "#94a3b8",
+            "font.family": "sans-serif",
+            "font.sans-serif": ["Inter", "DejaVu Sans", "Arial"],
+        }
+    )
 
-# Add values at the end of each bar
-for bar in bars:
-    width = bar.get_width()
-    ax.text(width + 3, bar.get_y() + bar.get_height()/2, f'{width:.1f} Mbps', 
-            va='center', ha='left', fontsize=10, fontweight='bold', color='#f8fafc')
+    fig, ax = plt.subplots(figsize=(10, 5), dpi=300)
+    bars = ax.barh(
+        CATEGORIES,
+        THROUGHPUT,
+        color=COLORS,
+        height=0.6,
+        edgecolor="none",
+    )
 
-# Set x-limit with some padding
-ax.set_xlim(0, 175)
+    ax.set_title(
+        "Best-observed throughput by configuration",
+        fontsize=14,
+        fontweight="bold",
+        pad=20,
+        color="#f8fafc",
+    )
+    ax.set_xlabel("User throughput (Mbps)", fontsize=11, labelpad=10)
+    ax.xaxis.grid(True, linestyle="--", alpha=0.15, color="#e2e8f0")
+    ax.set_axisbelow(True)
 
-plt.tight_layout()
+    for spine in ("top", "right", "left", "bottom"):
+        ax.spines[spine].set_visible(False)
 
-# Save image
-plt.savefig('performance_comparison.png', bbox_inches='tight', facecolor=fig.get_facecolor(), edgecolor='none')
-print("Successfully generated performance_comparison.png in French")
+    for bar, value in zip(bars, THROUGHPUT):
+        ax.text(
+            value + 3,
+            bar.get_y() + bar.get_height() / 2,
+            f"{value:.0f} Mbps",
+            va="center",
+            ha="left",
+            fontsize=10,
+            fontweight="bold",
+            color="#f8fafc",
+        )
+
+    ax.set_xlim(0, 220)
+    fig.text(
+        0.5,
+        0.01,
+        "Different hosts/runs; best observations, not controlled averages",
+        ha="center",
+        fontsize=8,
+        color="#94a3b8",
+    )
+    fig.tight_layout(rect=(0, 0.04, 1, 1))
+    fig.savefig(
+        output,
+        bbox_inches="tight",
+        facecolor=fig.get_facecolor(),
+        edgecolor="none",
+    )
+    plt.close(fig)
+    print(f"Saved: {output}")
+
+
+if __name__ == "__main__":
+    main()

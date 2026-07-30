@@ -1,7 +1,7 @@
 # State of the art and project positioning
 
 **Date:** June 18, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 

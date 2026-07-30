@@ -22,7 +22,7 @@ margin: 0.08
 
 **Du banc d'essai radio au backhaul 5G**
 
-![[Pasted image 20260604093732.png|1100]]
+<img src="img/Pasted%20image%2020260604093732.png" alt="Annotated physical 5G testbed" width="1100">
 
 Note:
 Presentation courte, environ 10 minutes. L'objectif est de donner une vue globale: ce qui etait prevu, ce qui a ete fait, les resultats, le banc d'essai et les prochaines etapes.
@@ -76,18 +76,8 @@ Cette slide explique le plan initial. On ne cherchait pas seulement une demo fin
 
 ## Le banc d'essai
 
-- **serber-firecell**: coeur 5G OAI, CU, cellule donneuse.
-- **serber-minipc**: DU d'acces, USRP B210, modem Quectel.
-- **USRP B210**: radio 5G locale.
-- **Quectel RM500Q-GL**: modem 5G pour le backhaul cible.
-- **Nothing Phone**: UE commercial pour les validations.
 
-![[picture-of-setup.png|950]]
-
-<span class="small">Si besoin: remplacer par une photo finale nommee `bench-topology-photo.jpg`.</span>
-
-Note:
-Le banc est important parce qu'il permet de tester avec une vraie radio, un vrai telephone, et plusieurs transports F1.
+<img src="img/picture-of-setup.png" alt="Physical testbed with compute nodes labeled" width="950">
 
 ---
 
@@ -134,7 +124,7 @@ Point cle: le Quectel doit utiliser une cellule donneuse separee, pas la cellule
 - Plan **Quectel + WireGuard** implemente.
 - TUI et scripts pour lancer, valider et rollback.
 
-![[diagram-of-setup.png|850]]
+<img src="img/diagram-of-setup.png" alt="Target airborne CU/DU testbed architecture" width="850">
 
 Note:
 Le resultat n'est pas seulement radio: c'est aussi un banc que l'on peut relancer et documenter.
@@ -150,7 +140,7 @@ Le resultat n'est pas seulement radio: c'est aussi un banc que l'on peut relance
 | CU/DU Wi-Fi GRE | backhaul sans fil valide | ~12 Mb/s |
 | Quectel / WireGuard | en validation | F1-C et tunnel prouves, F1-U final ouvert |
 
-![[throughput_chart 1.png|900]]
+<img src="img/throughput_chart%201.png" alt="Observed throughput by configuration" width="900">
 
 Note:
 Ne pas survendre Quectel. Les resultats solides sont monolithique, Ethernet split avec SIB8, et Wi-Fi GRE. Quectel est avance, mais la preuve utilisateur finale reste a fermer.
@@ -195,7 +185,7 @@ Comparer proprement plusieurs transports F1:
 - **Quectel 5G**: cible principale en validation.
 - **DU portable**: direction suivante.
 
-![[Pasted image 20260616095439.png|950]]
+<img src="img/Pasted%20image%2020260616095439.png" alt="Deployment tooling interface" width="950">
 
 <span class="small">Image future possible: `validation-workflow-screenshot.png`.</span>
 
@@ -211,7 +201,7 @@ Le banc devient un outil pour faire des campagnes experimentales, pas seulement 
 3. Produire une matrice de performance Ethernet / Wi-Fi / Quectel.
 4. Stabiliser le profil DU portable.
 
-![[IMG_4346.jpg|760]]
+<img src="img/IMG_4346.jpg" alt="Physical testbed in the laboratory" width="760">
 
 <span class="small">Image future possible: `portable-du-drone-concept.jpg`.</span>
 

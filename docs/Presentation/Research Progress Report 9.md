@@ -1,6 +1,8 @@
 
 **Date:** May 17, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+# End-to-end user-plane recovery and Pi 5 tuning
+
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 
@@ -91,10 +93,10 @@ The 5G TUI has been updated to support  not only monolithic, but also CU/DU spli
 
 | Configuration      | Throughput |
 | ------------------ | ---------- |
-| serber-pi (DU)     | 1.0 MB/s   |
-| serber-minipc (DU) | 1.1 MB/s   |
+| serber-pi (DU)     | 1.0 Mbps   |
+| serber-minipc (DU) | 1.1 Mbps   |
 
-Bottleneck unknown. serber-minipc previously achieved 40+ MB/s in monolithic mode with older antennas. Running only the DU on serber-minipc should give better results. The limitation may be in the F1 transport path or CU processing overhead, not the DU/RF.
+Bottleneck unknown. serber-minipc previously achieved 40+ Mbps in monolithic mode with older antennas. Running only the DU on serber-minipc should give better results. The limitation may be in the F1 transport path or CU processing overhead, not the DU/RF.
 
 ---
 
@@ -110,5 +112,5 @@ Bottleneck unknown. serber-minipc previously achieved 40+ MB/s in monolithic mod
 
 ## Next Steps
 
-1. Optimize current setup: investigate throughput bottleneck (2.2 MB/s on minipc vs 40 MB/s monolithic)
+1. Optimize current setup: investigate throughput bottleneck (2.2 Mbps on minipc vs 40 Mbps monolithic)
 2. 5G backhauling: replace ethernet link between CU and DU with 5G connection

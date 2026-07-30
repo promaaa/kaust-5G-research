@@ -1,18 +1,49 @@
 
+# Jetson 5G backhaul recovery and budget drone sizing
 
-**Date:** July 8, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+**Date:** July 16, 2026
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 
 ## What changed since last update
 
-1. X310: New cable installation and tests
-2. Jetson throughput improved and limitations of the board
-3. New tests on the Raspberry pi 
-4. Drone and battery sizin
-5. Documentation
+1. Jetson Quectel throughput recovered: the Nothing Phone reached approximately `40 Mbps` with the Jetson access DU using Quectel 5G and WireGuard for F1 backhaul.
+2. Jetson runtime was aligned with the successful configuration: the 106 PRB access DU used the full downlink MCS range with `DL_MAX_MCS=28`.
+3. TUI reproducibility was improved: the Jetson Quectel profile now checks modem and WireGuard prerequisites and preserves the validated runtime settings.
+4. Topology validation was strengthened: phone traffic must be attributed to the access DU rather than the donor cell before throughput is accepted.
+5. Drone and battery sizing remains based on the lighter Jetson and Raspberry Pi payload options.
 
+
+---
+
+## Jetson CU/DU with Quectel backhaul
+
+The Jetson split configuration recovered the previously observed high-throughput result. In the latest Nothing Phone speed test, the downlink reached approximately **40 Mbps** while the Jetson operated as the access DU and the Quectel modem provided the 5G/WireGuard F1 backhaul to the CU on `serber-firecell`.
+
+| Metric | Result |
+| --- | --- |
+| DU host | Jetson Orin Nano |
+| Access radio | USRP B210 |
+| Radio profile | 106 PRB |
+| F1 backhaul | Quectel 5G with WireGuard |
+| Phone throughput | Approximately `40 Mbps` |
+| Previous Jetson result | Approximately `7.3 Mbps` |
+| Improvement | Approximately `5.5x` |
+| Measurement status | User-confirmed Nothing Phone speed test |
+
+```yaml
+jetson_quectel_result:
+  access_du: serber-jetson
+  access_radio: USRP_B210
+  bandwidth: 106_PRB
+  f1_transport: Quectel_5G_WireGuard
+  dl_max_mcs: 28
+  phone_throughput: approximately_40_Mbps
+  previous_throughput: approximately_7.3_Mbps
+```
+
+This result changes the Jetson conclusion. The board is no longer only a service-capable low-throughput candidate. It now demonstrates throughput close to the earlier successful Quectel baseline while retaining the lower mass and power advantages needed for an airborne DU.
 
 ---
 
@@ -20,14 +51,14 @@
 
 The lowest-cost flight branch is not to shrink the current full payload onto an undersized drone. The better budget solution is to reduce the first airborne payload:
 
-| Component | Planning value | Comment |
-| --- | ---: | --- |
-| Raspberry Pi 5 board | 46 g, 25.5 W design ceiling | Uses the official 5.1 V, 5 A class power budget |
-| USRP B205mini-i | 24 g, about 5 W planning value | Very light USB SDR, not yet validated as the lab access-radio baseline |
-| Quectel kit or backhaul modem support | 180 g, 12 W planning value | Keeps the wireless F1 backhaul concept |
-| Light RF, cooling, timing, and cabling allowance | 180 g, 8 W | Covers small fans, RF cables, filters, and accessories |
-| Light power and mount allowance | 300 g | DC regulators, wiring, plate, isolation, and enclosure |
-| Electronics battery | 208 g | Auline V45 3000 mAh 4S, 14.8 V, 44.4 Wh class |
+| Component                                        |                 Planning value | Comment                                                                |
+| ------------------------------------------------ | -----------------------------: | ---------------------------------------------------------------------- |
+| Raspberry Pi 5 board                             |    46 g, 25.5 W design ceiling | Uses the official 5.1 V, 5 A class power budget                        |
+| USRP B205mini-i                                  | 24 g, about 5 W planning value | Very light USB SDR, not yet validated as the lab access-radio baseline |
+| Quectel kit or backhaul modem support            |     180 g, 12 W planning value | Keeps the wireless F1 backhaul concept                                 |
+| Light RF, cooling, timing, and cabling allowance |                     180 g, 8 W | Covers small fans, RF cables, filters, and accessories                 |
+| Light power and mount allowance                  |                          300 g | DC regulators, wiring, plate, isolation, and enclosure                 |
+| Electronics battery                              |                          208 g | Auline V45 3000 mAh 4S, 14.8 V, 44.4 Wh class                          |
 
 For a 20 minute electronics runtime target, the planning payload is:
 
@@ -133,7 +164,7 @@ The light payload is attractive because it changes the drone class. It is below 
 | Configuration | Payload mass | Required drone rating | Technical confidence | Budget meaning |
 | --- | ---: | ---: | --- | --- |
 | Pi 5 + B205mini-i + Quectel | 0.94 kg | 1.34 kg | Low to medium until B205mini validation | Cheapest flight branch |
-| Jetson + B210 + Quectel | 1.59 kg | 2.27 kg | Medium, phone service works but throughput is low | Best validation bridge |
+| Jetson + B210 + Quectel | 1.59 kg | 2.27 kg | Medium to high, phone service and approximately 40 Mbps throughput demonstrated | Best validation bridge |
 | Mini-PC + B210 + Quectel | 2.36 kg | 3.37 kg | Highest match to current lab architecture | Needs Matrice 400 class |
 | Dual-radio or instrumentation | 3.01 kg | 4.30 kg | Future expansion | Needs Matrice 400 or heavier |
 
@@ -176,4 +207,4 @@ if_goal_is_most_reliable_current_OAI_payload:
 4. Build a `0.94 kg` dummy payload: use it for mounting, vibration, cooling, and center-of-gravity checks.
 5. Quote two drone paths: Tarot X8-class custom build for controlled lab testing, and Matrice 350 or Matrice 400 for safer vendor-supported flight.
 6. Keep X310 off the drone path until the host-to-X310 transport is proven above 1 GbE.
-7. Continue Jetson optimization separately: it is service-capable now, but throughput still needs to approach the Pi and MiniPC baselines.
+7. Reproduce the Jetson result from a clean TUI launch: confirm phone attachment through the access DU, Quectel attachment through the donor cell, PWS, internet, and approximately `40 Mbps` throughput.

@@ -76,7 +76,7 @@
 ### 4. gNB + Core Network on oai ✅
 - Core Network running (docker containers: oai-amf, oai-smf, oai-upf, etc.)
 - gNB (nr-softmodem) built and running
-- UE registration working (1 UE registered: IMSI 001010000059453)
+- UE registration working (1 UE registered: IMSI <ue-imsi>)
 - Config: `gnb.sa.band78.fr1.106PRB.usrpb210.conf`
 - **Fixed:** Serial was incorrectly set to `8002816`, changed to `35F8ABA`
 
@@ -163,8 +163,11 @@ Link detected: no
 
 ### SSH Access
 ```bash
-sshpass -p 'root4SERBER' ssh -o StrictHostKeyChecking=no serber@10.76.170.117
+ssh <lab-user>@<edge-du-address>
 ```
+
+Use an SSH key or your institution's approved credential manager. Never store
+lab passwords in this repository or pass them directly on the command line.
 
 ### Build Libraries (if rebuilding)
 ```bash
@@ -189,15 +192,6 @@ cat /proc/net/sctp/assocs
 ```bash
 sudo docker logs oai-amf --tail 30 | grep gNB
 ```
-
-## SSH Credentials
-
-| Machine | Username | Password |
-|---------|----------|----------|
-| serber-firecell | serber | root4SERBER |
-| serber-minipc | serber | root4SERBER |
-| serber-pi | serber | root4SERBER |
-| oai | oai | root4SERBER |
 
 ## Important Commands
 

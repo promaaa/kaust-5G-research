@@ -1,7 +1,7 @@
 # Downlink BLER and MCS adaptation in Ethernet split and monolithic modes
 
 **Date:** June 24, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 

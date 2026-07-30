@@ -1,5 +1,6 @@
+# OAI core deployment and Jetson SCTP constraints
 
-**Timeline:** April 7 – July 31, 2025 (16 weeks)
+**Timeline:** April 7 – July 31, 2026 (16 weeks)
 
 | Phase                | Weeks | Description                  |
 | -------------------- | ----- | ---------------------------- |
@@ -27,7 +28,7 @@ I deployed the full OAI 5G Core Network on serber-firecell (10.85.143.198) using
 | `rfsim5g-oai-nr-ue`   | 192.168.71.150   | Simulated UE                           |
 | `rfsim5g-oai-ext-dn`  | 192.168.72.135   | External Data Network                  |
 
-**Status:** All containers healthy. UE attached and able t o ping the data network (`12.1.1.1`, RTT ~59 ms).
+**Status:** All containers healthy. UE attached and able to ping the data network (`12.1.1.1`, RTT ~59 ms).
 
 ---
 

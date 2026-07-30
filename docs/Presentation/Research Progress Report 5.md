@@ -1,4 +1,6 @@
-**Timeline:** April 7 – July 31, 2025 (16 weeks)
+# Raspberry Pi 5 DU benchmarking
+
+**Timeline:** April 7 – July 31, 2026 (16 weeks)
 
 | Phase | Weeks | Description |
 | --- | --- | --- |
@@ -100,7 +102,7 @@ For DU + AI malware detection on drone:
 
 ## Device Comparison
 
-![Weight and Power Comparison](weight_power_comparison.png)
+![Weight and Power Comparison](../Other/imgs/weight_power_comparison.png)
 
 | Device | Weight | Power Consumption |
 | --- | --- | --- |

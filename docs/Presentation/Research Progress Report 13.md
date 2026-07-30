@@ -1,6 +1,8 @@
 
 **Date:** June 7, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+# MCS analysis, donor topology, and Faraday-cage validation
+
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 
@@ -27,7 +29,7 @@ Thus the hardware is not the issue.
 
 I started reworking on the TUI to implement every configuration in it. Everything is hard coded in the first time to be able to perform every demo
 
-![[Pasted image 20260607105147.png]]
+![MCS experiment evidence](img/Pasted%20image%2020260607105147.png)
 
 ---
 
@@ -68,7 +70,7 @@ The important change is that both the Quectel donor and the CU use the same fire
 
 ## Faraday cage validation
 
-![[Diagramme sans nom.drawio.png]]
+![Experimental topology](img/Diagramme%20sans%20nom.drawio.png)
 
 Packet captures confirmed that F1-C was on the Quectel backhaul path
 The phone then reached about `15 Mbps`.
@@ -88,4 +90,4 @@ I've got an answer to my msg on the Nvidia's forum
 4. Write a proper documentation
 5. Try to run one CU with multiple DUs
 6. Try setting up the new kernel for Jetson and eventually deploy our config on it
-7. Make an adaptableTUI 
+7. Make an adaptableTUI

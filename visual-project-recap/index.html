@@ -92,6 +92,24 @@
       font-weight: 600;
     }
 
+    .slide-text.compact {
+      font-size: 0.59em;
+      line-height: 1.35;
+    }
+
+    .slide-text.compact h2 {
+      font-size: 1.45em;
+      margin-bottom: 16px;
+    }
+
+    .slide-text.compact p {
+      margin-bottom: 12px;
+    }
+
+    .slide-text.compact li {
+      margin-bottom: 8px;
+    }
+
     .slide-visual {
       flex: 1.9;
       display: flex;
@@ -116,19 +134,9 @@
       border-radius: 8px;
     }
 
-    /* Mermaid custom styles for slides */
-    .mermaid {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .mermaid svg {
-      max-height: 100% !important;
-      max-width: 100% !important;
-      height: auto !important;
+    .flex-1 {
+      flex: 1.9 1 0;
+      min-width: 0;
     }
 
     /* Slide specific styles */
@@ -275,23 +283,7 @@
             <p style="font-size: 0.95em; color: #38bdf8;"><strong>The core network brain stays safe on the ground, while the drone serves as a lightweight flying relay.</strong></p>
           </div>
           <div class="slide-visual">
-            <div class="mermaid">
-              graph TD
-                subgraph Ground["Ground Station"]
-                  A["Core Network + CU<br>(Heavy Computing)"]
-                end
-                subgraph Air["Drone Relay"]
-                  B["DU + USRP B210 Radio<br>(Lightweight RF Payload)"]
-                end
-                subgraph User["Emergency Area"]
-                  C["Nothing Phone User<br>(PWS Warning Alert)"]
-                end
-                A --&gt;|"WireGuard (F1-C/U)"| B
-                B -.->|"5G n78 Access Link"| C
-                style Ground fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
-                style Air fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
-                style User fill:#1e293b,stroke:#f43f5e,stroke-width:2px,color:#f8fafc
-            </div>
+            <img src="assets/diagrams/project-concept.svg" alt="Ground station linked to a lightweight airborne 5G relay">
           </div>
         </div>
       </section>
@@ -306,16 +298,7 @@
             <p>A drone can <strong>restore emergency coverage within minutes</strong>. The engineering challenge is keeping the airborne equipment light and power-efficient without losing full 5G capabilities.</p>
           </div>
           <div class="slide-visual">
-            <div class="mermaid">
-              flowchart TD
-                Disaster["Disaster Event<br>(Floods, Fires, Outages)"] --&gt; Outage["Ground Towers Broken<br>(No Cellular Signal)"]
-                Outage --&gt; Rescue["Drone 5G Relay<br>(Deploys in Minutes)"]
-                Rescue --&gt; Recovery["Emergency Coverage Restored<br>(PWS Warning Sent)"]
-                style Disaster fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc
-                style Outage fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc
-                style Rescue fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
-                style Recovery fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
-            </div>
+            <img src="assets/diagrams/emergency-use-case.svg" alt="Emergency sequence from infrastructure outage to restored 5G coverage">
           </div>
         </div>
       </section>
@@ -323,7 +306,7 @@
       <!-- Slide 3 — What CU/DU split means -->
       <section>
         <div class="slide-layout">
-          <div class="slide-text">
+          <div class="slide-text compact">
             <div class="title-subtitle">Architecture Concept</div>
             <h2>Understanding the CU/DU Split</h2>
             <p>A standard 5G base station is separated into distinct functional layers:</p>
@@ -334,7 +317,7 @@
             </ul>
           </div>
           <div class="slide-visual">
-            <img src="assets/diagram-of-setup.png" alt="Simple CU/DU Split architecture diagram">
+            <img src="assets/diagrams/cu-du-split.svg" alt="CU/DU functional split from core network to the radio access link">
           </div>
         </div>
       </section>
@@ -342,7 +325,7 @@
       <!-- Slide 4 — The physical testbed -->
       <section>
         <div class="slide-layout">
-          <div class="slide-text">
+          <div class="slide-text compact">
             <div class="title-subtitle">Hardware Deployment</div>
             <h2>Our Physical Testbed</h2>
             <p>We built and validated a real-world benchtop setup using accessible hardware:</p>
@@ -370,19 +353,7 @@
             <p>Key achievements include connecting a <strong>commercial phone</strong>, broadcasting <strong>emergency warnings (PWS)</strong>, and implementing <strong>5G WireGuard backhauling</strong>.</p>
           </div>
           <div class="slide-visual">
-            <div class="mermaid">
-              flowchart LR
-                A["Simulation"] --&gt; B["Real Radio"] --&gt; C["Nothing Phone"] --&gt; D["Emergency PWS"] --&gt; E["Ethernet Split"] --&gt; F["Pi 5 DU"] --&gt; G["WiFi GRE"] --&gt; H["Quectel 5G"] --&gt; I["Target Setup"]
-                style A fill:#1e293b,stroke:#3b82f6,color:#f8fafc
-                style B fill:#1e293b,stroke:#3b82f6,color:#f8fafc
-                style C fill:#1e293b,stroke:#10b981,color:#f8fafc
-                style D fill:#1e293b,stroke:#10b981,color:#f8fafc
-                style E fill:#1e293b,stroke:#10b981,color:#f8fafc
-                style F fill:#1e293b,stroke:#10b981,color:#f8fafc
-                style G fill:#1e293b,stroke:#f59e0b,color:#f8fafc
-                style H fill:#1e293b,stroke:#f59e0b,color:#f8fafc
-                style I fill:#1e293b,stroke:#f59e0b,color:#f8fafc
-            </div>
+            <img src="assets/diagrams/progress-timeline.svg" alt="Project progression from simulation to the target airborne setup">
           </div>
         </div>
       </section>
@@ -398,16 +369,16 @@
           </div>
           <div class="pivot-grid flex-1">
             <div class="pivot-card">
-              <div class="pivot-title">1. Tegra Kernel Roadblock</div>
-              <div class="pivot-content"><strong>Problem</strong>: Jetson Orin Nano lacked SCTP protocol support.<br><strong>Pivot</strong>: Switched to standard x86 Mini PC and Raspberry Pi 5 to gain native out-of-the-box SCTP support.</div>
+              <div class="pivot-title">1. Jetson Kernel and I/O</div>
+              <div class="pivot-content"><strong>Problem</strong>: SCTP, USB throughput, and interrupt contention blocked the embedded DU.<br><strong>Resolution</strong>: A custom kernel plus CPU, IRQ, and USB tuning made it viable.</div>
             </div>
             <div class="pivot-card">
               <div class="pivot-title">2. Single-Radio Overload</div>
               <div class="pivot-content"><strong>Problem</strong>: One radio could not handle user access and backhaul at the same time.<br><strong>Pivot</strong>: Switched roles: USRP B210 serves the phone, while a Quectel 5G modem handles wireless backhaul.</div>
             </div>
             <div class="pivot-card">
-              <div class="pivot-title">3. Throughput Limitation Bottleneck</div>
-              <div class="pivot-content"><strong>Problem</strong>: Upgrading DU hardware strength did not remove split-mode speed limits.<br><strong>Pivot</strong>: Identified the bottleneck inside the scheduler configuration; focus moved to OAI scheduler tuning.</div>
+              <div class="pivot-title">3. Transport and Scheduler</div>
+              <div class="pivot-content"><strong>Problem</strong>: The early split stalled near 23 Mbps.<br><strong>Resolution</strong>: MTU/MSS and BLER-threshold tuning removed the apparent ceiling.</div>
             </div>
           </div>
         </div>
@@ -416,11 +387,11 @@
       <!-- Slide 7 — What works today -->
       <section>
         <div class="slide-layout">
-          <div class="slide-text">
+          <div class="slide-text compact">
             <div class="title-subtitle">Current Status</div>
             <h2>What Works Today</h2>
-            <p>Our current system has successfully validated all key features of the split 5G architecture.</p>
-            <p>Performance optimization and final user-traffic validation over the wireless backhaul link are currently under active testing.</p>
+            <p>The split 5G architecture works end to end.</p>
+            <p>Next: controlled benchmarks and flight integration.</p>
           </div>
           <div class="dashboard-grid flex-1">
             <div class="db-card"><span class="db-icon success">✓</span><span>Commercial phone registers to split 5G</span><span class="db-badge done">Done</span></div>
@@ -429,8 +400,10 @@
             <div class="db-card"><span class="db-icon success">✓</span><span>F1 interface tunneled over wireless path</span><span class="db-badge done">Done</span></div>
             <div class="db-card"><span class="db-icon success">✓</span><span>Quectel 5G wireless backhaul path setup</span><span class="db-badge done">Done</span></div>
             <div class="db-card"><span class="db-icon success">✓</span><span>Pi 5 DU timing overflows resolved</span><span class="db-badge done">Done</span></div>
-            <div class="db-card validation"><span class="db-icon warn">⚠</span><span>End-to-end backhaul speed validation</span><span class="db-badge pending">Testing</span></div>
-            <div class="db-card validation"><span class="db-icon warn">⚠</span><span>Split-mode scheduler bottleneck fix</span><span class="db-badge pending">Testing</span></div>
+            <div class="db-card"><span class="db-icon success">✓</span><span>End-to-end backhaul speed validation</span><span class="db-badge done">Done</span></div>
+            <div class="db-card"><span class="db-icon success">✓</span><span>Split-mode scheduler bottleneck fix</span><span class="db-badge done">Done</span></div>
+            <div class="db-card validation"><span class="db-icon warn">⚠</span><span>Repeated benchmark campaign</span><span class="db-badge pending">Pending</span></div>
+            <div class="db-card validation"><span class="db-icon warn">⚠</span><span>Flight integration</span><span class="db-badge pending">Pending</span></div>
           </div>
         </div>
       </section>
@@ -438,57 +411,30 @@
       <!-- Slide 8 — Current target architecture -->
       <section>
         <div class="slide-layout">
-          <div class="slide-text">
+          <div class="slide-text compact">
             <div class="title-subtitle">System Layout</div>
-            <h2>Target Single-Core Setup</h2>
-            <p>Our unified architecture runs on a single central server:</p>
+            <h2>Target Airborne Architecture</h2>
+            <p>The ground node hosts the heavy network functions while the payload carries the radio edge:</p>
             <ul>
-              <li><strong>serber-firecell (Ground)</strong>: Runs 5G Core, Central Unit (CU), and a donor base station.</li>
-              <li><strong>serber-minipc (Remote)</strong>: Runs DU, access radio (B210), and Quectel backhaul modem.</li>
-              <li><strong>Data Flow</strong>: User phone traffic reaches the DU, tunnels via WireGuard over the Quectel 5G link, and reaches the Core on the ground.</li>
+              <li><strong>Ground node</strong>: 5G Core, Central Unit, and donor base station.</li>
+              <li><strong>Airborne payload</strong>: Embedded DU, access SDR, and Quectel backhaul modem.</li>
+              <li><strong>Data flow</strong>: WireGuard transports F1-C and F1-U over the donor 5G link.</li>
             </ul>
           </div>
           <div class="slide-visual">
-            <div class="mermaid">
-              graph TD
-                subgraph Ground["Ground Station (serber-firecell)"]
-                  Core["OAI 5G Core"]
-                  CU["OAI Central Unit (CU)"]
-                  Donor["OAI Donor Cell (gNB)<br>(PCI 1, TAC 2)"]
-                  Core --- CU
-                  Core --- Donor
-                end
-                subgraph Remote["Remote Unit (serber-minipc)"]
-                  Quectel["Quectel 5G Modem<br>(IP 10.0.0.6)"]
-                  DU["OAI Distributed Unit (DU)<br>(PCI 0, TAC 1)"]
-                  B210["USRP B210 Access Radio"]
-                  DU --- B210
-                end
-                subgraph UE["User Device"]
-                  Phone["Nothing Phone"]
-                end
-                
-                Donor -.->|"5G RF Link"| Quectel
-                Quectel == "WireGuard F1 Link" ==> CU
-                B210 -.->|"5G RF Access"| Phone
-                
-                style Ground fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
-                style Remote fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
-                style UE fill:#1e293b,stroke:#f43f5e,stroke-width:2px,color:#f8fafc
-            </div>
+            <img src="assets/diagrams/target-architecture.svg" alt="Target architecture linking ground network functions to the airborne payload">
           </div>
         </div>
       </section>
 
-      <!-- Slide 9 — Results and remaining bottleneck -->
+      <!-- Slide 9 — Updated performance interpretation -->
       <section>
         <div class="slide-layout">
-          <div class="slide-text">
+          <div class="slide-text compact">
             <div class="title-subtitle">Metrics &amp; Benchmarks</div>
-            <h2>Performance Bottleneck</h2>
-            <p>We measured speeds across different connection styles:</p>
-            <p>While monolithic 5G achieves 150 Mbps, split mode drops to <strong>23 Mbps</strong>. Moving the DU to stronger hardware did not increase speed.</p>
-            <p style="font-size: 0.95em; color: #fb7185;"><strong>The scheduler pins transmission rates to the lowest setting (MCS 0) due to delayed channel reports.</strong></p>
+            <h2>Tuning Removed the Early 23 Mbps Ceiling</h2>
+            <p>Later tests overturned the early split ceiling. Tuned Ethernet reached <strong>100 Mbps</strong>, Wi-Fi/GRE reached <strong>52 Mbps</strong>, and Quectel/WireGuard reached <strong>78 Mbps</strong>, versus a <strong>190 Mbps</strong> monolithic peak.</p>
+            <p style="font-size: 0.95em; color: #fb7185;"><strong>MTU/MSS behavior and BLER scheduler thresholds—not the split alone—were the main recoverable constraints. These are best observations, not averages.</strong></p>
           </div>
           <div class="slide-visual">
             <img src="assets/performance_comparison.png" alt="Matplotlib Throughput Performance Comparison Chart">
@@ -499,32 +445,32 @@
       <!-- Slide 10 — What is next -->
       <section>
         <div class="slide-layout">
-          <div class="slide-text">
+          <div class="slide-text compact">
             <div class="title-subtitle">Roadmap</div>
             <h2>What is Next</h2>
-            <p>We have moved from simulation to a real, separated 5G network with wireless backhaul.</p>
-            <p style="font-size: 0.95em; color: #34d399;"><strong>Our next challenge is making this setup fast, reproducible, and ready for drone flights.</strong></p>
+            <p>The separated 5G network and wireless F1 paths now work.</p>
+            <p style="font-size: 0.95em; color: #34d399;"><strong>The next phase turns best-observed demonstrations into a repeatable, flight-safe research artifact.</strong></p>
           </div>
           <div class="roadmap-list flex-1">
             <div class="roadmap-item">
               <div class="rm-num">1</div>
-              <div class="rm-content"><strong>Prove Backhaul Path</strong>: Confirm phone traffic runs strictly over Quectel backhaul counters.</div>
+              <div class="rm-content"><strong>Freeze the Stack</strong>: Publish the exact OAI revision, patches, and configurations.</div>
             </div>
             <div class="roadmap-item">
               <div class="rm-num">2</div>
-              <div class="rm-content"><strong>Tune Scheduler</strong>: Raise the MCS transmission speeds to break the 23 Mbps limit.</div>
+              <div class="rm-content"><strong>Repeat the Campaign</strong>: Run controlled trials with synchronized metrics.</div>
             </div>
             <div class="roadmap-item">
               <div class="rm-num">3</div>
-              <div class="rm-content"><strong>Package Code</strong>: Secure configurations for a fully reproducible live demo.</div>
+              <div class="rm-content"><strong>Publish Evidence</strong>: Release sanitized samples and packet-path proof.</div>
             </div>
             <div class="roadmap-item">
               <div class="rm-num">4</div>
-              <div class="rm-content"><strong>Validate Raspberry Pi 5 DU</strong>: Re-test the Pi 5 DU with the wireless backhaul loop.</div>
+              <div class="rm-content"><strong>Validate the Light Radio</strong>: Qualify B205mini-i before choosing the small-drone path.</div>
             </div>
             <div class="roadmap-item">
               <div class="rm-num">5</div>
-              <div class="rm-content"><strong>Airborne Flight</strong>: Move the benchtop setup onto a drone for wide-area coverage tests.</div>
+              <div class="rm-content"><strong>Engineer the Flight</strong>: Bench-test power, cooling, RF isolation, mounting, and failsafes.</div>
             </div>
           </div>
         </div>
@@ -535,10 +481,7 @@
 
   <!-- Reveal.js script -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
-  <!-- Mermaid script from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <script>
-    // Initialize Reveal.js and configure Mermaid
     Reveal.initialize({
       hash: true,
       width: 1100,
@@ -553,25 +496,6 @@
       center: true,
       slideNumber: 'h.v',
       plugins: []
-    });
-
-    Reveal.on('ready', event => {
-      mermaid.initialize({ 
-        startOnLoad: false, 
-        theme: 'dark',
-        securityLevel: 'loose',
-        flowchart: { useMaxWidth: true, htmlLabels: true }
-      });
-      mermaid.run({
-        nodes: document.querySelectorAll('.mermaid')
-      });
-    });
-
-    Reveal.on('slidechanged', event => {
-      // Re-run mermaid on active slide to avoid width calculation bugs
-      mermaid.run({
-        nodes: event.currentSlide.querySelectorAll('.mermaid')
-      });
     });
   </script>
 </body>

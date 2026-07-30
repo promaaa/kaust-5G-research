@@ -1,4 +1,6 @@
-**Timeline:** April 7 – July 31, 2025 (16 weeks)
+# USRP B210 validation and Raspberry Pi 5 DU feasibility
+
+**Timeline:** April 7 – July 31, 2026 (16 weeks)
 
 | Phase | Weeks | Description |
 | --- | --- | --- |
@@ -18,9 +20,9 @@ Major breakthrough: The USRP B210 is now built and working perfectly. I have suc
 
 The USRP B210 is now fully operational. OAI's `usrp_lib.cpp` was modified to support 61.44 MHz master clock for B210.
 
-![[Pasted image 20260426083150.png|300]]
+<img src="../Other/imgs/Pasted%20image%2020260426083150.png" alt="Raspberry Pi test setup" width="300">
 
-![[Pasted image 20260426083216.png|300]]
+<img src="../Other/imgs/Pasted%20image%2020260426083216.png" alt="Raspberry Pi test setup detail" width="300">
 
 ---
 ## Recap: Previous Architecture
@@ -109,7 +111,7 @@ Anduril's `jetpack-nixos` provides:
 
 --- 
 
-# PI 5
+## Raspberry Pi 5
 
 ## The Problem: Pi 5 L1 Processing at Full Bandwidth
 
@@ -247,7 +249,7 @@ For reference — serber-minipc can run the full 5G stack on its own:
 
 ## Device Comparison: Weight & Power Consumption
 
-![Weight and Power Comparison](weight_power_comparison.png)
+![Weight and Power Comparison](../Other/imgs/weight_power_comparison.png)
 
 | Device | Weight | Power Consumption (Typical) |
 | --- | --- | --- |

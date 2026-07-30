@@ -163,7 +163,7 @@ cat ~/openairinterface5g/sib8.conf
 ```bash
 sudo docker logs oai-amf --tail 20 2>&1 | grep -E 'UE|5GMM'
 ```
-Look for IMSI 001010000059453
+Look for IMSI <ue-imsi>
 
 ==========================================
 ## TECHNICAL DETAILS

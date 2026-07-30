@@ -77,7 +77,7 @@ Presenter: Research Team
 
 ---
 
-## Slide 1 — The idea in one picture
+## The idea in one picture
 
 <div class="grid">
 <div>
@@ -91,30 +91,14 @@ The core network brain stays safe on the ground, while the drone serves as a lig
 </div>
 <div>
 
-```mermaid
-graph TD
-    subgraph Ground["Ground Station"]
-        A["Core Network + CU<br>(Heavy Computing)"]
-    end
-    subgraph Air["Drone Relay"]
-        B["DU + USRP B210 Radio<br>(Lightweight RF Payload)"]
-    end
-    subgraph User["Emergency Area"]
-        C["Nothing Phone User<br>(PWS Warning Alert)"]
-    end
-    A -->|"WireGuard (F1-C/U)"| B
-    B -.->|"5G n78 Access Link"| C
-    style Ground fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
-    style Air fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
-    style User fill:#1e293b,stroke:#f43f5e,stroke-width:2px,color:#f8fafc
-```
+![width:600px](assets/diagrams/project-concept.svg)
 
 </div>
 </div>
 
 ---
 
-## Slide 2 — Why this project matters
+## Why this project matters
 
 <div class="grid">
 <div>
@@ -128,23 +112,14 @@ A drone can **restore emergency coverage within minutes**. The challenge is keep
 </div>
 <div>
 
-```mermaid
-flowchart TD
-    Disaster["Disaster Event<br>(Floods, Fires, Outages)"] --> Outage["Ground Towers Broken<br>(No Cellular Signal)"]
-    Outage --> Rescue["Drone 5G Relay<br>(Deploys in Minutes)"]
-    Rescue --> Recovery["Emergency Coverage Restored<br>(PWS Warning Sent)"]
-    style Disaster fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc
-    style Outage fill:#1e293b,stroke:#ef4444,stroke-width:2px,color:#f8fafc
-    style Rescue fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
-    style Recovery fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
-```
+![width:600px](assets/diagrams/emergency-use-case.svg)
 
 </div>
 </div>
 
 ---
 
-## Slide 3 — What CU/DU split means
+## What CU/DU split means
 
 <div class="grid">
 <div>
@@ -160,14 +135,14 @@ We divide a 5G base station into two parts:
 </div>
 <div>
 
-![width:440px](assets/diagram-of-setup.png)
+![width:600px](assets/diagrams/cu-du-split.svg)
 
 </div>
 </div>
 
 ---
 
-## Slide 4 — The physical testbed
+## The physical testbed
 
 <div class="grid">
 <div>
@@ -185,14 +160,14 @@ We validated a real-world benchtop setup using accessible hardware:
 </div>
 <div>
 
-![width:440px](assets/picture-of-setup.png)
+![width:520px](assets/picture-of-setup.png)
 
 </div>
 </div>
 
 ---
 
-## Slide 5 — Progress timeline
+## Progress timeline
 
 <div class="grid">
 <div>
@@ -206,26 +181,14 @@ Key achievements include connecting a **commercial phone**, broadcasting **emerg
 </div>
 <div>
 
-```mermaid
-flowchart LR
-    A["Simulation"] --> B["Real Radio"] --> C["Nothing Phone"] --> D["Emergency PWS"] --> E["Ethernet Split"] --> F["Pi 5 DU"] --> G["WiFi GRE"] --> H["Quectel 5G"] --> I["Target Setup"]
-    style A fill:#1e293b,stroke:#3b82f6,color:#f8fafc
-    style B fill:#1e293b,stroke:#3b82f6,color:#f8fafc
-    style C fill:#1e293b,stroke:#10b981,color:#f8fafc
-    style D fill:#1e293b,stroke:#10b981,color:#f8fafc
-    style E fill:#1e293b,stroke:#10b981,color:#f8fafc
-    style F fill:#1e293b,stroke:#10b981,color:#f8fafc
-    style G fill:#1e293b,stroke:#f59e0b,color:#f8fafc
-    style H fill:#1e293b,stroke:#f59e0b,color:#f8fafc
-    style I fill:#1e293b,stroke:#f59e0b,color:#f8fafc
-```
+![width:600px](assets/diagrams/progress-timeline.svg)
 
 </div>
 </div>
 
 ---
 
-## Slide 6 — The main engineering pivots
+## The main engineering pivots
 
 <div class="grid">
 <div>
@@ -240,8 +203,8 @@ We resolved **protocol blocks, hardware overloading, and signal saturation** to 
 <div class="card-container">
 
 <div class="card">
-<div class="card-title">1. Tegra Kernel Roadblock</div>
-Jetson Orin Nano lacked SCTP protocol support. Pivoted to x86 and Pi 5 for native kernel support.
+<div class="card-title">1. Jetson Kernel and I/O</div>
+A custom SCTP kernel plus CPU, IRQ, and USB tuning made the embedded DU viable.
 </div>
 
 <div class="card">
@@ -250,8 +213,8 @@ One radio could not serve both access and backhaul. Dedicated B210 to phone, and
 </div>
 
 <div class="card">
-<div class="card-title">3. Throughput Bottleneck</div>
-Upgrading DU strength did not remove split-mode speed limits. Shifted focus to OAI scheduler tuning.
+<div class="card-title">3. Transport and Scheduler</div>
+MTU/MSS and BLER-threshold tuning removed the early 23 Mbps split ceiling.
 </div>
 
 </div>
@@ -259,7 +222,7 @@ Upgrading DU strength did not remove split-mode speed limits. Shifted focus to O
 
 ---
 
-## Slide 7 — What works today
+## What works today
 
 <div class="grid">
 <div>
@@ -268,7 +231,8 @@ Upgrading DU strength did not remove split-mode speed limits. Shifted focus to O
 
 Our current system has successfully validated all key features of the split 5G architecture.
 
-Performance optimization and final user-traffic validation over the wireless backhaul link are currently under active testing.
+The remaining work is to turn best-observed runs into a controlled, publishable
+measurement campaign and complete the flight integration.
 
 </div>
 <div class="card-container" style="font-size: 0.75em;">
@@ -278,103 +242,82 @@ Performance optimization and final user-traffic validation over the wireless bac
 * **CU/DU split F1 separation** <span class="badge">Done</span>
 * **Wireless F1 tunnel over WiFi/5G** <span class="badge">Done</span>
 * **Raspberry Pi 5 DU timing fix** <span class="badge">Done</span>
-* **End-to-end backhaul speed** <span class="badge pending">Testing</span>
-* **Split scheduler bottleneck fix** <span class="badge pending">Testing</span>
+* **End-to-end backhaul speed** <span class="badge">Done</span>
+* **Split scheduler bottleneck fix** <span class="badge">Done</span>
+* **Repeated benchmark campaign** <span class="badge pending">Pending</span>
+* **Flight integration** <span class="badge pending">Pending</span>
 
 </div>
 </div>
 
 ---
 
-## Slide 8 — Current target architecture
+## Current target architecture
 
 <div class="grid">
 <div>
 
 **System Layout**
 
-Our unified architecture runs on a single central server:
-
-* **serber-firecell (Ground)**: Runs 5G Core, CU, and donor base station.
-* **serber-minipc (Remote)**: Runs DU, access B210, and Quectel modem.
-* **WireGuard Tunnel**: Over the Quectel 5G link, carrying F1-C &amp; F1-U.
+* **Ground**: 5G core, CU, and donor cell.
+* **Payload**: Embedded DU, access SDR, and Quectel modem.
+* **Transport**: WireGuard carries F1-C and F1-U over the donor 5G link.
 
 </div>
 <div>
 
-```mermaid
-graph TD
-    subgraph Ground["Ground Station (serber-firecell)"]
-        Core["OAI 5G Core"]
-        CU["OAI Central Unit (CU)"]
-        Donor["OAI Donor Cell (gNB)<br>(PCI 1, TAC 2)"]
-        Core --- CU
-        Core --- Donor
-    end
-    subgraph Remote["Remote Unit (serber-minipc)"]
-        Quectel["Quectel 5G Modem<br>(IP 10.0.0.6)"]
-        DU["OAI Distributed Unit (DU)<br>(PCI 0, TAC 1)"]
-        B210["USRP B210 Access Radio"]
-        DU --- B210
-    end
-    subgraph UE["User Device"]
-        Phone["Nothing Phone"]
-    end
-    
-    Donor -.->|"5G RF Link"| Quectel
-    Quectel == "WireGuard F1 Link" ==> CU
-    B210 -.->|"5G RF Access"| Phone
-    
-    style Ground fill:#1e293b,stroke:#3b82f6,stroke-width:2px,color:#f8fafc
-    style Remote fill:#1e293b,stroke:#10b981,stroke-width:2px,color:#f8fafc
-    style UE fill:#1e293b,stroke:#f43f5e,stroke-width:2px,color:#f8fafc
-```
+![width:620px](assets/diagrams/target-architecture.svg)
 
 </div>
 </div>
 
 ---
 
-## Slide 9 — Results and remaining bottleneck
+## Tuning removed the early 23 Mbps ceiling
 
 <div class="grid">
 <div>
 
-**Throughput Benchmarks**
+**Best-observed throughput**
 
-While monolithic 5G achieves 150 Mbps, split mode drops to **23 Mbps**. Moving the DU to stronger hardware did not increase speed.
+Later tests overturned the early split ceiling:
 
-The scheduler pins transmission rates to the lowest setting (**MCS 0**) due to delayed channel reports.
+* **100 Mbps** tuned Ethernet
+* **52 Mbps** Wi-Fi/GRE
+* **78 Mbps** Quectel/WireGuard
+* **190 Mbps** monolithic peak
+
+**Interpretation:** MTU/MSS behavior and BLER thresholds—not the split
+alone—were the recoverable constraints. Values are best observations.
 
 </div>
 <div>
 
-![width:440px](assets/performance_comparison.png)
+![width:600px](assets/performance_comparison.png)
 
 </div>
 </div>
 
 ---
 
-## Slide 10 — What is next
+## What is next
 
 <div class="grid">
 <div>
 
-**Roadmap to Flight**
+**Roadmap to a defensible flight artifact**
 
-We have moved from simulation to a real, separated 5G network with wireless backhaul.
-
-**Our next challenge is making this setup fast, reproducible, and ready for drone flights.**
+The separated 5G network and wireless F1 paths now work. The next phase turns
+best-observed demonstrations into a repeatable, flight-safe research artifact.
 
 </div>
 <div class="card-container" style="font-size: 0.85em;">
 
-1. **Prove Backhaul Path**: Confirm phone traffic runs strictly over Quectel counters.
-2. **Tune Scheduler**: Break the 23 Mbps limit.
-3. **Package Code**: Secure configurations.
-4. **Validate Pi 5 DU**: Re-test Pi DU on backhaul.
-5. **Airborne Flight**: Transition to flight.
+1. **Freeze the stack**: Publish the exact OAI revision, patches, and configs.
+2. **Repeat the campaign**: Run controlled trials with synchronized metrics.
+3. **Publish evidence**: Release sanitized samples and packet-path proof.
+4. **Validate the light radio**: Qualify B205mini-i before choosing the small-drone path.
+5. **Engineer the flight**: Bench-test power, cooling, RF isolation, mounting, and failsafes.
 
 </div>
 </div>

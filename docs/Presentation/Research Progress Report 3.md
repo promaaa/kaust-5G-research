@@ -1,4 +1,6 @@
-**Timeline:** April 7 – July 31, 2025 (16 weeks)
+# CU/DU bring-up and direct-Ethernet planning
+
+**Timeline:** April 7 – July 31, 2026 (16 weeks)
 
 | Phase                | Weeks | Description                  |
 | -------------------- | ----- | ---------------------------- |
@@ -119,4 +121,6 @@ I have created the scenario configs file on serber-minipc for each scenario:
 ---
 ### **Summary**
 
-The CU/DU separation is now working. The DU on serber-minipc successfully registers with the Core Network on serber-firecell. Tomorrow's Ethernet test will validate the direct link performance before moving to real hardware (USRP B210) and wireless backhaul scenarios.![[Pasted image 20260421141536.png]]
+The CU/DU separation is now working. The DU on serber-minipc successfully registers with the Core Network on serber-firecell. Tomorrow's Ethernet test will validate the direct link performance before moving to real hardware (USRP B210) and wireless backhaul scenarios.
+
+![OAI setup evidence](../Other/imgs/Pasted%20image%2020260421141536.png)

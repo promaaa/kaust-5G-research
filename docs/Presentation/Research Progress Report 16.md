@@ -1,7 +1,7 @@
 # State of the art and added value
 
 **Date:** June 19, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 

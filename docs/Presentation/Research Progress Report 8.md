@@ -1,6 +1,8 @@
 
 **Date:** May 12, 2026
-**Timeline:** April 7 – July 31, 2025 (16 weeks)
+# CU/DU radio failure isolation and Pi 5 performance
+
+**Timeline:** April 7 – July 31, 2026 (16 weeks)
 
 ---
 

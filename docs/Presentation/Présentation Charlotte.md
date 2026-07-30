@@ -49,9 +49,9 @@ flowchart TD
 
 <grid cols="2" gap="10">
 
-![[diagram-of-setup.png]]
+![Target airborne CU/DU architecture](img/diagram-of-setup.png)
 
-![[IsMG_4346.jpg]]
+![Physical testbed in the laboratory](img/IMG_4346.jpg)
 
 </grid>
 
@@ -59,7 +59,7 @@ flowchart TD
 
 ## Le banc d'essai physique
 
-![[Pasted image 20260604093732.png]]
+![Annotated physical testbed](img/Pasted%20image%2020260604093732.png)
 
 ---
 
@@ -89,9 +89,9 @@ flowchart LR
 
 ### Résolution des verrous
 
-1. **Jetson (Tegra)** : Incompatibilité du noyau avec SCTP. Pivot vers mini-PC et Pi 5.
+1. **Jetson (Tegra)** : Noyau SCTP recompilé, puis profil CPU/USB stabilisé.
 2. **RF** : Une seule radio sature en accès et transport. Séparation des rôles (USRP et Quectel).
-3. **Débit** : Le CPU n'est pas le goulot. Pivot vers l'analyse du planificateur OAI.
+3. **Débit** : Analyse conjointe MTU/MSS, BLER et planificateur OAI.
 
 </div>
 
@@ -99,7 +99,7 @@ flowchart LR
 
 <div style="background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(255,255,255,0.05); border-left: 4px solid #ef4444; border-radius: 8px; padding: 10px 15px; margin-bottom: 10px;">
   <strong style="color: #f8fafc;">Noyau SCTP</strong><br>
-  Le noyau Jetson manquait de SCTP. Le passage à x86/Pi 5 a résolu le blocage réseau.
+  Un noyau SCTP adapté et un profil CPU/USB ont rendu le DU Jetson opérationnel.
 </div>
 
 <div style="background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(255,255,255,0.05); border-left: 4px solid #f59e0b; border-radius: 8px; padding: 10px 15px; margin-bottom: 10px;">
@@ -109,7 +109,7 @@ flowchart LR
 
 <div style="background: rgba(30, 41, 59, 0.3); border: 1px solid rgba(255,255,255,0.05); border-left: 4px solid #38bdf8; border-radius: 8px; padding: 10px 15px; margin-bottom: 10px;">
   <strong style="color: #f8fafc;">Planificateur</strong><br>
-  Le débit est limité par des rétroactions de canal tardives forçant la modulation minimale MCS 0.
+  Le réglage MTU/MSS et l'adaptation des seuils BLER ont permis au MCS de remonter.
 </div>
 
 </div>
@@ -127,10 +127,8 @@ flowchart LR
 ### État de validation
 
 * Connexions et alertes PWS stabilisées.
-* DU stable sur Pi 5 via isolation de threads.
-
-**[Illustration souhaitée]**
-*Prendre une photo de l'écran du Nothing Phone affichant la notification d'alerte PWS réelle et l'insérer à droite.*
+* Ethernet séparé réglé jusqu'à 100 Mbps en pointe.
+* Jetson avec backhaul Quectel validé autour de 40–44 Mbps.
 
 </div>
 
@@ -142,7 +140,7 @@ flowchart LR
 <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 8px 12px;"><span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>Transport F1 sur canal sans fil</div>
 <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 8px 12px;"><span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>Liaison de transport via Quectel</div>
 <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 8px; padding: 8px 12px;"><span style="color: #10b981; font-weight: bold; margin-right: 8px;">✓</span>Thread pinning validé sur Pi 5</div>
-<div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; padding: 8px 12px; grid-column: span 2;"><span style="color: #f59e0b; font-weight: bold; margin-right: 8px;">⚠</span>En cours : attribution finale des débits et correction du planificateur radio</div>
+<div style="background: rgba(245, 158, 11, 0.1); border: 1px solid rgba(245, 158, 11, 0.2); border-radius: 8px; padding: 8px 12px; grid-column: span 2;"><span style="color: #f59e0b; font-weight: bold; margin-right: 8px;">⚠</span>En cours : répétitions contrôlées et publication des preuves expérimentales</div>
 
 </div>
 
@@ -206,13 +204,15 @@ graph TD
 
 ### Goulot d'étranglement
 
-Plafonnement systématique en mode séparé (23 Mbps maximum). Le planificateur radio maintient le lien sur la modulation la plus basse (MCS 0).
+Les essais tardifs ont invalidé le plafond initial de 23 Mbps. Le split Ethernet réglé a atteint 100 Mbps en pointe; le chemin Wi-Fi/GRE 52 Mbps et le chemin Quectel/WireGuard 78 Mbps.
+
+Ces valeurs sont des meilleurs résultats observés, pas des moyennes contrôlées.
 
 </div>
 
 <div>
 
-![[performance_comparison.png]]
+![Best-observed throughput comparison](img/throughput_chart_best.png)
 
 </div>
 
@@ -228,10 +228,7 @@ Plafonnement systématique en mode séparé (23 Mbps maximum). Le planificateur 
 
 ### Travaux futurs
 
-L'optimisation se concentre sur l'efficacité spectrale, la robustesse du Pi 5 et l'intégration drone.
-
-**[Illustration souhaitée]**
-*Prendre une photo de la zone d'essai de vol ou de l'intégration finale sur drone et l'insérer à droite.*
+La suite transforme les démonstrations en artefact reproductible et prépare une intégration drone sûre.
 
 </div>
 
@@ -239,23 +236,23 @@ L'optimisation se concentre sur l'efficacité spectrale, la robustesse du Pi 5 e
 
 <div style="background: rgba(30, 41, 59, 0.3); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03);">
   <span style="background: #3b82f6; color: #0b0f19; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">1</span>
-  <span style="color: #cbd5e1;"><strong>Attribution du débit</strong> : isoler les compteurs réseau physiques sur le Quectel.</span>
+  <span style="color: #cbd5e1;"><strong>Geler le logiciel</strong> : publier le commit OAI, les patchs et configurations exacts.</span>
 </div>
 <div style="background: rgba(30, 41, 59, 0.3); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03);">
   <span style="background: #3b82f6; color: #0b0f19; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">2</span>
-  <span style="color: #cbd5e1;"><strong>Planificateur radio</strong> : corriger le choix dynamique de modulation (MCS).</span>
+  <span style="color: #cbd5e1;"><strong>Répéter les mesures</strong> : campagnes contrôlées avec métriques synchronisées.</span>
 </div>
 <div style="background: rgba(30, 41, 59, 0.3); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03);">
   <span style="background: #3b82f6; color: #0b0f19; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">3</span>
-  <span style="color: #cbd5e1;"><strong>Reproductibilité</strong> : automatiser le déploiement du banc d'essai.</span>
+  <span style="color: #cbd5e1;"><strong>Publier les preuves</strong> : données anonymisées et validation du chemin des paquets.</span>
 </div>
 <div style="background: rgba(30, 41, 59, 0.3); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03);">
   <span style="background: #3b82f6; color: #0b0f19; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">4</span>
-  <span style="color: #cbd5e1;"><strong>DU sur Pi 5</strong> : évaluer le comportement thermique en charge radio continue.</span>
+  <span style="color: #cbd5e1;"><strong>Radio légère</strong> : valider le B205mini-i avant le choix d'un petit drone.</span>
 </div>
 <div style="background: rgba(30, 41, 59, 0.3); border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; gap: 12px; border: 1px solid rgba(255,255,255,0.03);">
   <span style="background: #3b82f6; color: #0b0f19; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800;">5</span>
-  <span style="color: #cbd5e1;"><strong>Châssis drone</strong> : intégration mécanique et alimentation de la charge utile.</span>
+  <span style="color: #cbd5e1;"><strong>Châssis drone</strong> : alimentation, refroidissement, RF, fixation et sécurités.</span>
 </div>
 
 </div>

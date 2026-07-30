@@ -1,7 +1,7 @@
 # Research Progress Report 7: CU/DU Split Deployment & PWS Debugging
 
 **Date:** May 10, 2026
-**Timeline:** April 7 – July 31, 2025 (16 weeks)
+**Timeline:** April 7 – July 31, 2026 (16 weeks)
 
 ---
 
@@ -157,10 +157,10 @@ Both USRP B210 units were tested with the 5G antennas:
 
 | USRP B210 | Throughput | Notes |
 |---|---|---|
-| Old unit | **123 MB/s** | Baseline performance |
-| New unit | **130 MB/s** | Improved performance |
+| Old unit | **123 Mbps** | Baseline performance |
+| New unit | **130 Mbps** | Improved performance |
 
-**Note:** Previous concerning results with the new unit (80 MB/s) were traced to the antennas, not hardware. With proper antenna configuration, both units perform well within expected ranges.
+**Note:** Previous concerning results with the new unit (80 Mbps) were traced to the antennas, not hardware. With proper antenna configuration, both units perform well within expected ranges.
 
 ---
 
@@ -415,8 +415,8 @@ Hypothesis: CORESET/SearchSpace config in split DU limits PDCCH candidates. Aggr
 | DU PWS handler | COMPLETE | Wired |
 | B210 51 PRB (DU) | COMPLETE | 30.72 MSps |
 | B210 106 PRB (DU) | FAILED | B210 cannot support 61.44 MSps |
-| B210 throughput (old) | COMPLETE | 123 MB/s |
-| B210 throughput (new) | COMPLETE | 130 MB/s |
+| B210 throughput (old) | COMPLETE | 123 Mbps |
+| B210 throughput (new) | COMPLETE | 130 Mbps |
 | UE registration | IN PROGRESS | CCE allocation issue |
 | SIM in database | PENDING | Need parameters from owner |
 
@@ -425,10 +425,10 @@ Hypothesis: CORESET/SearchSpace config in split DU limits PDCCH candidates. Aggr
 ## 10. Deployment Commands
 
 ```bash
-# Rsync to both hosts
-export SSHPASS='root4SERBER'
-rsync -avz --exclude='.git' -e "sshpass -e ssh -o StrictHostKeyChecking=no" /Users/promaa/Documents/cu-du/ serber@serber-minipc:cu-du/
-rsync -avz --exclude='.git' -e "sshpass -e ssh -o StrictHostKeyChecking=no" /Users/promaa/Documents/cu-du/ serber@serber-firecell:cu-du/
+# Rsync to both hosts using SSH keys.
+source_dir="${OAI_LAB_REPO:?Set OAI_LAB_REPO to the local deployment repository}"
+rsync -avz --exclude='.git' "$source_dir/" <lab-user>@<du-host>:cu-du/
+rsync -avz --exclude='.git' "$source_dir/" <lab-user>@<cu-host>:cu-du/
 
 # On serber-minipc (DU)
 sshpass -e ssh serber@serber-minipc
@@ -453,7 +453,7 @@ cd ~/monolithic/openairinterface5g/cmake_targets/ran_build/build && nohup sudo .
 | CU/DU split with B210 | DEPLOYED |
 | PWS over F1 (WriteReplaceWarning) | IMPLEMENTED |
 | B210 51 PRB (10 MHz) on serber-minipc | STABLE |
-| B210 throughput (old: 123 MB/s, new: 130 MB/s) | VALIDATED |
+| B210 throughput (old: 123 Mbps, new: 130 Mbps) | VALIDATED |
 | 51 PRB hardcoded due to B210 limitation | ACKNOWLEDGED |
 | UE PRACH detection | WORKING |
 | UE Msg2 scheduling | BLOCKED (CCE allocation) |
@@ -463,4 +463,3 @@ cd ~/monolithic/openairinterface5g/cmake_targets/ran_build/build && nohup sudo .
 | UE full registration | CCE / CORESET config issue |
 | SIM in database for Nothing Phone | NEEDED (waiting for owner parameters) |
 | Monolithic 106 PRB vs split 51 PRB frequency delta | INVESTIGATING |
-

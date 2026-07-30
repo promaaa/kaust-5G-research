@@ -1,6 +1,8 @@
 
 **Date:** June 21, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+# State of the art, RF backhaul, and MCS recovery
+
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 
@@ -120,7 +122,7 @@ The 22 Mbps figure that had been recorded as the Ethernet CU/DU ceiling was a co
 ## TUI Adaptability 
 
 Now the TUI can easily adapt to a new setup with different ip addresses and machines.
-![[Pasted image 20260623103127.png]]
+![Deployment profile selection](../Pasted%20image%2020260623103127.png)
 
 ---
 

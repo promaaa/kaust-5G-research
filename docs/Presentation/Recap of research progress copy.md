@@ -3,8 +3,8 @@
 *Current status: Week 6 (out of 16 weeks total)*
 
 ## What changed since last update
-1. Throughput performance optimized: achieved 23 MB/s on `serber-minipc` through the CU/DU split (eth).
-2. Wireless backhaul integrated: successfully routed F1 traffic over wifi using a GRE tunnel on `serber-minipc` with 14 MB/s throughput.
+1. Throughput performance optimized: achieved 23 Mbps on `serber-minipc` through the CU/DU split (eth).
+2. Wireless backhaul integrated: successfully routed F1 traffic over wifi using a GRE tunnel on `serber-minipc` with 14 Mbps throughput.
 3. Repository published: uploaded all configurations and scripts to a reproducible gh repo.
 
 ## Network infrastructure and hardware introduction
@@ -17,7 +17,7 @@ To introduce the deployment, the physical testbed is composed of four primary ha
 | `serber-pi`       | Lightweight DU        | `10.76.170.94`  | Ubuntu 22.04 (pi version) |
 | Nothing Phone     | User Equipment (UE)   | Dynamic (12.1.1.2) | Android 14                |
 
-![[picture-of-setup 1.png]]
+![Physical testbed](img/picture-of-setup.png)
 
 ## Schematics of what we are trying to achieve
 ```mermaid
@@ -57,9 +57,9 @@ graph LR
 
 ## Phase 5: Backhauling (wifi/5G)
 
-* Achieved **23 MB/s** throughput over Ethernet using the optimized CU/DU split on `serber-minipc`.
+* Achieved **23 Mbps** throughput over Ethernet using the optimized CU/DU split on `serber-minipc`.
 * Routed the F1 interface over a GRE tunnel via WiFi, replacing physical cabling.
-* Achieved **14 MB/s** throughput over the WiFi GRE tunnel (~60% of the physical Ethernet baseline).
+* Achieved **14 Mbps** throughput over the WiFi GRE tunnel (~60% of the physical Ethernet baseline).
 
 
 ## Next steps

@@ -21,8 +21,8 @@
 
 <div style="font-size: 0.65em; line-height: 1.5;">
 
-* **Throughput performance optimized:** achieved 23 MB/s on `serber-minipc` through the CU/DU split (eth).
-* **Wireless backhaul integrated:** successfully routed F1 traffic over wifi using a GRE tunnel on `serber-minipc` with 14 MB/s throughput.
+* **Throughput performance optimized:** achieved 23 Mbps on `serber-minipc` through the CU/DU split (eth).
+* **Wireless backhaul integrated:** successfully routed F1 traffic over wifi using a GRE tunnel on `serber-minipc` with 14 Mbps throughput.
 * **Repository published:** uploaded all configurations and scripts to a reproducible gh repo.
 
 </div>
@@ -53,7 +53,7 @@ To introduce the deployment, the physical testbed is composed of four primary ha
 The following photograph shows the physical testbed configuration:
 
 <div style="margin-top: 20px;">
-  <img src="picture-of-setup.png" alt="Setup" style="max-height: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #ddd;">
+  <img src="img/picture-of-setup.png" alt="Setup" style="max-height: 400px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 1px solid #ddd;">
 </div>
 
 </div>
@@ -63,7 +63,7 @@ The following photograph shows the physical testbed configuration:
 ### Schematics of what we are trying to achieve
 
 
-![[diagram-of-setup.png]]
+![Target airborne CU/DU architecture](img/diagram-of-setup.png)
 
 
 ---
@@ -120,9 +120,9 @@ The following photograph shows the physical testbed configuration:
 
 <div style="font-size: 0.65em; line-height: 1.5;">
 
-* **Baseline established:** achieved **23 MB/s** throughput over a direct physical L2 Ethernet F1 link.
+* **Baseline established:** achieved **23 Mbps** throughput over a direct physical L2 Ethernet F1 link.
 * **Wireless F1 tunnel:** encapsulated F1 traffic over a university WiFi network using a custom GRE tunnel.
-* **Performance:** sustained stable internet data sessions with **14 MB/s** user throughput (~60% baseline).
+* **Performance:** sustained stable internet data sessions with **14 Mbps** user throughput (~60% baseline).
 
 </div>
 

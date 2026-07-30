@@ -1,8 +1,7 @@
-ds
 # Downlink BLER adaptation, USRP X310 migration, and Jetson Orin Nano DU integration
 
 **Date:** July 2, 2026
-**Timeline:** April 7 to July 31, 2025 (16 weeks)
+**Timeline:** April 7 to July 31, 2026 (16 weeks)
 
 ---
 
