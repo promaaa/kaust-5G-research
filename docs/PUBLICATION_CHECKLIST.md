@@ -7,7 +7,7 @@
 - [x] Remove local AI-tool plans and operating-system metadata.
 - [x] Remove plaintext credentials from the current tree.
 - [x] Replace downloaded third-party papers with citations to original sources.
-- [x] Add repository hygiene, secret-pattern, and local-link checks.
+- [x] Simplify repository metadata and remove generated/local tooling.
 - [x] Document the scope and current reproducibility boundary.
 
 ## Release blockers
@@ -37,7 +37,6 @@
 
 - [ ] Add a concise repository description and topics.
 - [ ] Enable private vulnerability reporting and secret scanning.
-- [ ] Protect `main` and require the repository-check workflow.
+- [ ] Protect `main` against accidental force-pushes and deletions.
 - [ ] Review the repository from a fresh, unauthenticated clone.
 - [ ] Create a signed release only after the history rewrite and license choice.
-

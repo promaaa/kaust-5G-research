@@ -2,29 +2,21 @@
 
 ## Reproducibility status
 
-This repository can currently reproduce the published charts and render the
-documentation. Full deployment, the exact OAI revision and public patch set,
-baseline definitions, validation gates, and rollback workflow are maintained in
+This repository publishes the research record, static figures, and project
+recap. Full deployment, the exact OAI revision and public patch set, baseline
+definitions, validation gates, and rollback workflow are maintained in
 [`promaaa/oai-cu-du-lab`](https://github.com/promaaa/oai-cu-du-lab). Private
 runtime configuration and raw measurement bundles remain outside both
 repositories.
 
 That boundary is intentional and should be stated in any paper or public demo.
 
-## Documentation and chart environment
+## Documentation artifacts
 
-- Python 3.11–3.14
-- Dependencies pinned in [`requirements.txt`](../requirements.txt)
-- No committed virtual environment
-- No committed Obsidian plugin distribution
-
-```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -r requirements.txt
-python scripts/generate_throughput_charts.py
-python scripts/check_repository.py
-```
+The Markdown reports and static figures require no installation. Open
+[`visual-project-recap/index.html`](../visual-project-recap/index.html) directly
+or serve that directory with any static file server to view the interactive
+recap.
 
 ## Minimum experiment record
 

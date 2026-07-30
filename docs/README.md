@@ -31,6 +31,5 @@ documents the work but is not yet a complete clean-room reproduction artifact.
 ## Viewing the vault
 
 Open this directory as an Obsidian vault for wikilinks and Advanced Slides
-front matter. Portable Obsidian settings are tracked; downloaded plugin code and
-per-user workspace state are ignored.
-
+front matter. Local settings, downloaded plugin code, and per-user workspace
+state are not tracked.
