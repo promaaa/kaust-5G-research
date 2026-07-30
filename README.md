@@ -15,7 +15,7 @@ conditions, and non-ideal F1 transport interact in an OAI CU/DU split?**
 > [`promaaa/oai-cu-du-lab`](https://github.com/promaaa/oai-cu-du-lab), which is
 > the canonical operational source.
 
-![Best-observed throughput across shared configurations](docs/Presentation/img/throughput_chart_best.png)
+![Best-observed throughput across shared configurations](reports/assets/best-throughput.png)
 
 ## Current findings
 
@@ -25,11 +25,11 @@ embedded DU candidates.
 
 | Configuration | Best result recorded | Evidence |
 | --- | ---: | --- |
-| Monolithic x86 reference | 190 Mbps | [Report 19](docs/Presentation/Research%20Progress%20Report%2019.md) |
-| Tuned Ethernet CU/DU split | 100 Mbps peak | [Report 19](docs/Presentation/Research%20Progress%20Report%2019.md) |
-| Wi-Fi/GRE CU/DU split | 52 Mbps | [Report 19](docs/Presentation/Research%20Progress%20Report%2019.md) |
+| Monolithic x86 reference | 190 Mbps | [Report 19](reports/report-19.md) |
+| Tuned Ethernet CU/DU split | 100 Mbps peak | [Report 19](reports/report-19.md) |
+| Wi-Fi/GRE CU/DU split | 52 Mbps | [Report 19](reports/report-19.md) |
 | Quectel/WireGuard CU/DU split | 78 Mbps | Latest researcher-confirmed run; summarized in the [project recap](visual-project-recap/presentation.md) |
-| Jetson + Quectel/WireGuard | about 40–44 Mbps | [Reports 21–22](docs/Presentation/README.md#late-stage-results) |
+| Jetson + Quectel/WireGuard | about 40–44 Mbps | [Reports 21–22](reports/README.md#late-stage-results) |
 
 These values are best-observed results from different hosts and test sessions.
 They are **not** controlled statistical averages and should not be interpreted
@@ -41,12 +41,11 @@ hypotheses.
 
 | Path | Purpose |
 | --- | --- |
-| [`docs/`](docs/README.md) | Documentation index and reading order |
-| [`docs/Notes/`](docs/Notes/) | Setup notes, procedures, and project synthesis |
-| [`docs/Presentation/`](docs/Presentation/README.md) | Chronological progress reports and presentation sources |
-| [`docs/Other/`](docs/Other/README.md) | Technical scratch notes and annotated implementation images |
-| [`docs/References/`](docs/References/README.md) | Literature list with links to original sources |
-| [`docs/analysis/`](docs/analysis/) | Working assessment of scientific positioning |
+| [`PROJECT_SUMMARY.md`](PROJECT_SUMMARY.md) | Architecture, milestones, and consolidated project status |
+| [`PWS_PROCEDURE.md`](PWS_PROCEDURE.md) | Laboratory procedure for the isolated PWS testbed |
+| [`reports/`](reports/README.md) | Chronological reports, one French presentation, and supporting assets |
+| [`technical-notes/`](technical-notes/README.md) | Terminology, F1 configuration notes, and informal reading notes |
+| [`REFERENCES.md`](REFERENCES.md) | Curated literature list with original-source links |
 | [`visual-project-recap/`](visual-project-recap/) | Self-contained HTML/Markdown/PDF project recap |
 
 ## View the project recap
@@ -59,16 +58,11 @@ python3 -m http.server --directory visual-project-recap 8000
 
 Then open `http://localhost:8000`.
 
-The `docs/` directory can also be opened as an Obsidian vault. Install
-**Advanced Slides** from Obsidian's community-plugin browser if you want to
-render the slide-oriented Markdown files; the plugin itself is intentionally
-not vendored.
+The repository root can also be opened as an Obsidian vault. Install Advanced
+Slides separately if you want to render the French slide-oriented Markdown
+source; no editor plugin code or local settings are stored here.
 
-## Reproducibility and responsible use
-
-Start with [the reproducibility guide](docs/REPRODUCIBILITY.md). It distinguishes
-reported observations from repeatable artifacts and defines the minimum
-evidence expected for future measurements.
+## Responsible use
 
 This work uses software-defined radio equipment. Operate only with suitable
 shielding or authorization, approved frequencies and power levels, and local
@@ -78,6 +72,4 @@ a live public network.
 ## Licensing
 
 No public-use license has been selected yet. Until the copyright holder confirms
-one, normal copyright restrictions apply. License selection and author/citation
-metadata remain explicit items in the
-[publication checklist](docs/PUBLICATION_CHECKLIST.md).
+one, normal copyright restrictions apply.

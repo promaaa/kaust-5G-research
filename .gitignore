@@ -26,12 +26,5 @@ __pycache__/
 # Local AI/development tools
 .kilo/
 
-# Obsidian: keep portable vault settings, not local state or downloaded plugins
-docs/.obsidian/workspace.json
-docs/.obsidian/workspace-mobile.json
-docs/.obsidian/plugins/
-docs/.obsidian/cache/
-
-# Papers are cited by stable links instead of redistributed as local copies
-docs/Other/paper/
-
+# Obsidian local state and downloaded plugins
+/.obsidian/
