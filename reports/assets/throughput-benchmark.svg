@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 490" width="920" height="490" style="background-color: #0d1117; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;">
+
+    <defs>
+        <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0f172a"/>
+            <stop offset="100%" stop-color="#020617"/>
+        </linearGradient>
+        <filter id="shadow" x="-5%" y="-5%" width="110%" height="120%">
+            <feDropShadow dx="0" dy="2" stdDeviation="3" flood-opacity="0.25"/>
+        </filter>
+    </defs>
+    
+<rect width="920" height="490" rx="12" fill="url(#bg-grad)" stroke="#1e293b" stroke-width="1.5"/>
+<text x="32" y="38" fill="#f8fafc" font-size="18" font-weight="700" letter-spacing="-0.02em">OpenAirInterface 5G Testbed — Best-Observed Downlink Throughput</text>
+<text x="32" y="58" fill="#94a3b8" font-size="12" font-weight="400">Peak observed user-plane rate across disaggregated F1 transport and embedded DU setups</text>
+<line x1="240.0" y1="70" x2="240.0" y2="440" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+<text x="240.0" y="458" fill="#64748b" font-size="11" font-weight="500" text-anchor="middle">0 Mbps</text>
+<line x1="380.0" y1="70" x2="380.0" y2="440" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+<text x="380.0" y="458" fill="#64748b" font-size="11" font-weight="500" text-anchor="middle">50 Mbps</text>
+<line x1="520.0" y1="70" x2="520.0" y2="440" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+<text x="520.0" y="458" fill="#64748b" font-size="11" font-weight="500" text-anchor="middle">100 Mbps</text>
+<line x1="660.0" y1="70" x2="660.0" y2="440" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+<text x="660.0" y="458" fill="#64748b" font-size="11" font-weight="500" text-anchor="middle">150 Mbps</text>
+<line x1="800.0" y1="70" x2="800.0" y2="440" stroke="#1e293b" stroke-width="1" stroke-dasharray="4,4"/>
+<text x="800.0" y="458" fill="#64748b" font-size="11" font-weight="500" text-anchor="middle">200 Mbps</text>
+<text x="226" y="103" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="end">Monolithic Reference (x86)</text>
+<text x="226" y="115" fill="#64748b" font-size="9.5" font-weight="400" text-anchor="end">Single-host baseline (serber-firecell)</text>
+<rect x="240" y="90" width="560" height="28" rx="5" fill="#1e293b" fill-opacity="0.3"/>
+<rect x="240" y="90" width="532.0" height="28" rx="5" fill="#10b981" filter="url(#shadow)"/>
+<text x="782.0" y="109" fill="#f8fafc" font-size="12" font-weight="700">190 Mbps</text>
+<text x="226" y="149" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="end">Tuned Ethernet CU/DU Split</text>
+<text x="226" y="161" fill="#64748b" font-size="9.5" font-weight="400" text-anchor="end">Direct 1GbE + MSS 1360B + MCS 28</text>
+<rect x="240" y="136" width="560" height="28" rx="5" fill="#1e293b" fill-opacity="0.3"/>
+<rect x="240" y="136" width="280.0" height="28" rx="5" fill="#3b82f6" filter="url(#shadow)"/>
+<text x="530.0" y="155" fill="#f8fafc" font-size="12" font-weight="700">100 Mbps</text>
+<text x="226" y="195" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="end">5G Modem / WireGuard Split</text>
+<text x="226" y="207" fill="#64748b" font-size="9.5" font-weight="400" text-anchor="end">x86 DU + Quectel RM520N over 5G backhaul</text>
+<rect x="240" y="182" width="560" height="28" rx="5" fill="#1e293b" fill-opacity="0.3"/>
+<rect x="240" y="182" width="218.4" height="28" rx="5" fill="#8b5cf6" filter="url(#shadow)"/>
+<text x="468.4" y="201" fill="#f8fafc" font-size="12" font-weight="700">78 Mbps</text>
+<text x="226" y="241" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="end">Wi-Fi / GRE CU/DU Split</text>
+<text x="226" y="253" fill="#64748b" font-size="9.5" font-weight="400" text-anchor="end">x86 DU + campus Wi-Fi GRE overlay</text>
+<rect x="240" y="228" width="560" height="28" rx="5" fill="#1e293b" fill-opacity="0.3"/>
+<rect x="240" y="228" width="145.6" height="28" rx="5" fill="#a855f7" filter="url(#shadow)"/>
+<text x="395.6" y="247" fill="#f8fafc" font-size="12" font-weight="700">52 Mbps</text>
+<text x="226" y="287" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="end">Jetson Orin Nano + 5G DU</text>
+<text x="226" y="299" fill="#64748b" font-size="9.5" font-weight="400" text-anchor="end">Embedded DU candidate + custom SCTP kernel</text>
+<rect x="240" y="274" width="560" height="28" rx="5" fill="#1e293b" fill-opacity="0.3"/>
+<rect x="240" y="274" width="117.6" height="28" rx="5" fill="#f59e0b" filter="url(#shadow)"/>
+<text x="367.6" y="293" fill="#f8fafc" font-size="12" font-weight="700">42 Mbps</text>
+<text x="226" y="333" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="end">Untuned CU/DU Baseline</text>
+<text x="226" y="345" fill="#64748b" font-size="9.5" font-weight="400" text-anchor="end">Artificial ceiling (GTP-U MTU fragmentation)</text>
+<rect x="240" y="320" width="560" height="28" rx="5" fill="#1e293b" fill-opacity="0.3"/>
+<rect x="240" y="320" width="64.4" height="28" rx="5" fill="#f43f5e" filter="url(#shadow)"/>
+<text x="314.4" y="339" fill="#f8fafc" font-size="12" font-weight="700">23 Mbps</text>
+<text x="226" y="379" fill="#f1f5f9" font-size="12" font-weight="600" text-anchor="end">Raspberry Pi 5 DU</text>
+<text x="226" y="391" fill="#64748b" font-size="9.5" font-weight="400" text-anchor="end">Featherweight 46g ARM compute candidate</text>
+<rect x="240" y="366" width="560" height="28" rx="5" fill="#1e293b" fill-opacity="0.3"/>
+<rect x="240" y="366" width="61.6" height="28" rx="5" fill="#64748b" filter="url(#shadow)"/>
+<text x="311.6" y="385" fill="#f8fafc" font-size="12" font-weight="700">22 Mbps</text>
+<text x="888" y="474" fill="#475569" font-size="10" text-anchor="end">KAUST Resilient Communications Lab • 3GPP Band n78 (3.6 GHz, 106 PRB)</text>
+</svg>
