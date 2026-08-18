@@ -52,44 +52,6 @@ User-plane throughput was benchmarked across disaggregated F1 transport topologi
 | ![Raspberry Pi Testbed](reports/assets/raspberry-pi-testbed.png) | **Raspberry Pi 5 Embedded DU Candidate**<br>Featherweight 46 g single-board computer evaluated with isolated CPU cores and USB 3.0 USRP B210 RF interface. |
 | ![Weight vs Power Tradeoff](reports/assets/weight-power-comparison.png) | **Embedded DU Sizing & Tradeoffs**<br>Comparative mass vs power consumption analysis across x86, Jetson Orin Nano, and Raspberry Pi 5 for drone integration. |
 
-## Testbed Architecture
-
-```
-┌────────────────────────────────────────────────────────────────────────┐
-│                        GROUND STATION (serber-firecell)               │
-│  ┌───────────────────────┐          ┌───────────────────────────────┐  │
-│  │     OAI 5G Core       │◄──NGAP──►│         OAI 5G CU             │  │
-│  │ (AMF, SMF, UPF, NRF)  │          │ (RRC + PDCP + SIB8 Generator) │  │
-│  └───────────────────────┘          └───────────────┬───────────────┘  │
-│                                                     │ F1-C (SCTP/501)  │
-│                                                     │ F1-U (GTP-U/2152)│
-└─────────────────────────────────────────────────────┼──────────────────┘
-                                                      │
-                       WIRELESS F1 BACKHAUL           │
-        (WireGuard Overlay `wg-quectel-f1` over 5G/Wi-Fi Transport)
-                                                      │
-┌─────────────────────────────────────────────────────┼──────────────────┐
-│                   AIRBORNE PAYLOAD / DRONE RELAY    │                  │
-│                                                     ▼                  │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │              OAI 5G DU (serber-jetson / serber-pi)               │  │
-│  │               (RLC + MAC Scheduler + High-PHY)                   │  │
-│  └──────────────────────────────┬───────────────────────────────────┘  │
-│                                 │ UHD / USB 3.0                        │
-│                                 ▼                                      │
-│  ┌──────────────────────────────────────────────────────────────────┐  │
-│  │               SDR Access Radio (USRP B210 / B205mini)            │  │
-│  └──────────────────────────────┬───────────────────────────────────┘  │
-└─────────────────────────────────┼──────────────────────────────────────┘
-                                  │ 5G NR Band n78 (3.6 GHz, 106 PRB)
-                                  ▼
-                     ┌─────────────────────────┐
-                     │ Commercial Phone (UE)   │
-                     │  - PWS Alert Received   │
-                     │  - High-Speed Internet  │
-                     └─────────────────────────┘
-```
-
 ## Research Reports
 
 Chronological laboratory reports detailing 16 weeks of experimental progression:
