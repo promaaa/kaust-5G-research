@@ -2,8 +2,8 @@
 
 This directory contains the 22 chronological laboratory reports documenting 16 weeks of research on the airborne OpenAirInterface 5G CU/DU disaggregated testbed.
 
-> **Lab Onboarding Notice:**  
-> If you are looking for step-by-step operating runbooks, hardware inventories, troubleshooting guides, and drone sizing formulas, please consult [**`HANDOVER.md`**](../HANDOVER.md).
+> **Operational Context:**  
+> Deployment automation and configuration templates are maintained in the companion operational repository: [`promaaa/oai-cu-du-lab`](https://github.com/promaaa/oai-cu-du-lab).
 
 ---
 
@@ -49,4 +49,3 @@ Reports 18–22 supersede the early interim hypothesis that a ~23 Mbps throughpu
 ## Presentation Sources
 
 - [`french-project-presentation.md`](french-project-presentation.md) — Retained speaker-oriented presentation source derived from the notebook. Can be rendered using Obsidian with the Advanced Slides plugin.
-- [`visual-project-recap/`](../visual-project-recap/) — Interactive web-based and PDF project presentation.

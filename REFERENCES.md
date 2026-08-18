@@ -25,6 +25,3 @@ pages instead of redistributing downloaded copies.
    *ACM CoNEXT*, 2018.
    [doi:10.1145/3281411.3281437](https://doi.org/10.1145/3281411.3281437)
    · [NEC Labs summary](https://www.nec-labs.com/blog/skyran-a-self-organizing-lte-ran-in-the-sky/)
-
-The informal relevance ratings and additional reading links are preserved in
-[`technical-notes/literature-notes.md`](technical-notes/literature-notes.md).
