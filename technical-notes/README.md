@@ -1,10 +1,8 @@
-# Technical notes
+# Technical Notes & Domain Knowledge
 
-- [`glossary-and-f1-notes.md`](glossary-and-f1-notes.md) is a compact
-  terminology and F1-parameter notebook.
-- [`literature-notes.md`](literature-notes.md) contains informal relevance
-  ratings and reading notes; use the curated [reference list](../REFERENCES.md)
-  for citation.
+This directory contains foundational terminology, parameter reference sheets, and reading notes for the airborne 5G CU/DU disaggregated testbed.
 
-Downloaded paper PDFs are intentionally not stored here. Follow the stable
-source links in the reference list.
+- [`glossary-and-f1-notes.md`](glossary-and-f1-notes.md) — 5G Standalone protocol layers, abbreviations, and OAI F1 interface configuration parameters.
+- [`literature-notes.md`](literature-notes.md) — Informal research notes, paper evaluations, and ratings.
+- For formal academic citations and publication DOIs, refer to [**`REFERENCES.md`**](../REFERENCES.md).
+- For complete operational procedures, hardware configurations, and mathematical drone sizing models, refer to [**`HANDOVER.md`**](../HANDOVER.md).

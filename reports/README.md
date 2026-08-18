@@ -1,42 +1,52 @@
-# Progress reports and presentation sources
+# Progress Reports & Experimental Notebook
 
-The numbered reports are a chronological lab notebook, not a single polished
-paper. Early reports preserve interim hypotheses; later reports contain the
-current interpretation.
+This directory contains the 22 chronological laboratory reports documenting 16 weeks of research on the airborne OpenAirInterface 5G CU/DU disaggregated testbed.
 
-## Report index
+> **Lab Onboarding Notice:**  
+> If you are looking for step-by-step operating runbooks, hardware inventories, troubleshooting guides, and drone sizing formulas, please consult [**`HANDOVER.md`**](../HANDOVER.md).
 
-| Report | Focus |
-| --- | --- |
-| [2](report-02.md) | OAI core deployment and Jetson SCTP constraints |
-| [3](report-03.md) | CU/DU bring-up and direct-Ethernet planning |
-| [4](report-04.md) | B210 validation and Raspberry Pi 5 DU feasibility |
-| [5](report-05.md) | Raspberry Pi 5 benchmarking |
-| [6](report-06.md) | Commercial UE integration and PWS capability |
-| [7](report-07.md) | CU/DU deployment and PWS debugging |
-| [8](report-08.md) | Radio failure isolation and Pi 5 performance |
-| [9](report-09.md) | User-plane recovery and Pi 5 tuning |
-| [10](report-10.md) | Wi-Fi/GRE F1 and PWS/SIB8 validation |
-| [11](report-11.md) | Quectel/WireGuard F1 bring-up |
-| [12](report-12.md) | Bottleneck analysis, wireless backhaul, and Pi DU |
-| [13](report-13.md) | MCS analysis, donor topology, and RF isolation |
-| [14](report-14.md) | Deployment tooling and transport baselines |
-| [15](report-15.md) | State of the art and project positioning |
-| [16](report-16.md) | State of the art and claimed added value |
-| [17](report-17.md) | RF backhaul, lab wiki, and MCS recovery |
-| [18](report-18.md) | BLER/MCS root-cause analysis and mitigation |
-| [19](report-19.md) | X310 and Jetson Orin Nano integration |
-| [20](report-20.md) | X310 retest, embedded benchmarks, and payload sizing |
-| [21](report-21.md) | Power, mass, and Jetson validation |
-| [22](report-22.md) | Jetson 5G backhaul recovery and budget drone sizing |
+---
 
-## Late-stage results
+## Report Index
 
-Reports 18–22 supersede the early theory that a 23 Mbps ceiling was inherent to
-the split. They document tuned Ethernet results, MTU/MSS and BLER effects,
-embedded-host constraints, and later Jetson/Quectel performance.
+The numbered reports below serve as a chronological lab notebook. Early reports preserve interim hypotheses, while later reports (Reports 18–22) contain the validated findings and final architectural resolutions.
 
-[`french-project-presentation.md`](french-project-presentation.md) is the
-retained speaker-oriented presentation derived from the notebook. Open the
-repository root as an Obsidian vault and install Advanced Slides separately to
-preserve its slide formatting.
+| Report | Date | Primary Focus & Milestones |
+| :--- | :--- | :--- |
+| [**Report 02**](report-02.md) | Apr 15 | OAI core deployment, Docker environment, and Jetson SCTP constraints |
+| [**Report 03**](report-03.md) | Apr 22 | CU/DU split bring-up and direct Ethernet baseline planning |
+| [**Report 04**](report-04.md) | Apr 29 | USRP B210 hardware validation and Raspberry Pi 5 DU feasibility |
+| [**Report 05**](report-05.md) | May 02 | Raspberry Pi 5 benchmarking and softmodem thread pool tuning |
+| [**Report 06**](report-06.md) | May 05 | Commercial UE (Nothing Phone) integration and PWS baseline |
+| [**Report 07**](report-07.md) | May 08 | CU/DU split deployment and PWS debugging |
+| [**Report 08**](report-08.md) | May 12 | Radio failure isolation, RF attenuation, and Pi 5 performance |
+| [**Report 09**](report-09.md) | May 15 | User-plane data recovery and Pi 5 runtime tuning |
+| [**Report 10**](report-10.md) | May 19 | Wi-Fi/GRE F1 backhaul and PWS/SIB8 commercial handset validation |
+| [**Report 11**](report-11.md) | May 29 | Quectel 5G modem / WireGuard F1 bring-up and circular dependency discovery |
+| [**Report 12**](report-12.md) | Jun 05 | Bottleneck analysis, wireless backhaul, and Pi DU evaluation |
+| [**Report 13**](report-13.md) | Jun 10 | MCS analysis, donor cell topology separation, and RF isolation |
+| [**Report 14**](report-14.md) | Jun 16 | Operator TUI deployment tooling and transport baselines |
+| [**Report 15**](report-15.md) | Jun 20 | State of the art (SOTA) review and project positioning |
+| [**Report 16**](report-16.md) | Jun 22 | State of the art synthesis and experimental value proposition |
+| [**Report 17**](report-17.md) | Jun 23 | Dedicated RF backhaul, lab wiki, and MCS recovery |
+| [**Report 18**](report-18.md) | Jun 24 | Downlink BLER/MCS root cause (GTP-U MTU fragmentation vs TCP MSS clamping) |
+| [**Report 19**](report-19.md) | Jul 02 | Tuned Ethernet baseline (100 Mbps), USRP X310 evaluation, Jetson Orin Nano DU integration |
+| [**Report 20**](report-20.md) | Jul 08 | USRP X310 bandwidth retest (10 GbE requirement), embedded benchmarks |
+| [**Report 21**](report-21.md) | Jul 12 | Power, mass, and Jetson validation benchmarks |
+| [**Report 22**](report-22.md) | Jul 16 | Jetson 5G backhaul recovery (~40 Mbps), full mathematical drone & battery sizing models |
+
+---
+
+## Late-Stage Breakthroughs Summary
+
+Reports 18–22 supersede the early interim hypothesis that a ~23 Mbps throughput ceiling was an inherent limitation of the CU/DU split:
+1. **TCP MSS Clamping (1360 bytes):** Eliminated GTP-U IP packet fragmentation and reduced MAC Transport Block size, dropping physical BLER.
+2. **OAI Scheduler Tuning:** Adjusting `dl_bler_target_lower: 0.25` and `dl_max_mcs: 28` unlocked higher modulation orders (`MCS 24–27`).
+3. **Jetson Orin Nano Optimization:** Custom SCTP kernel, `MAXN_SUPER` mode, `jetson_clocks`, and USB-C SuperSpeed enumeration enabled stable ~40–44 Mbps over Quectel 5G WireGuard backhaul.
+
+---
+
+## Presentation Sources
+
+- [`french-project-presentation.md`](french-project-presentation.md) — Retained speaker-oriented presentation source derived from the notebook. Can be rendered using Obsidian with the Advanced Slides plugin.
+- [`visual-project-recap/`](../visual-project-recap/) — Interactive web-based and PDF project presentation.
