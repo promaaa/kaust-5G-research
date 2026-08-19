@@ -21,21 +21,7 @@ Key research dimensions include:
 
 > **Operational Tooling:**  
 > The deployment automation, configuration templates, patch set, and operator TUI are maintained in the companion operational repository:  
-> 👉 [`promaaa/oai-cu-du-lab`](https://github.com/promaaa/oai-cu-du-lab)
-
-## Performance Benchmarks
-
-User-plane throughput was benchmarked across disaggregated F1 transport topologies and embedded compute nodes:
-
-| Setup / Configuration | Transport Link | DU Compute Platform | Peak Downlink | Evidence |
-| :--- | :--- | :--- | :---: | :--- |
-| **Monolithic Reference** | Direct Host Memory / IPC | x86 (`serber-firecell`) | **190 Mbps** | [Report 19](reports/report-19.md) |
-| **Tuned Ethernet CU/DU Split** | 1 GbE Direct Ethernet | x86 (`serber-minipc`) | **100 Mbps** | [Report 19](reports/report-19.md) |
-| **5G Modem / WireGuard Split** | 5G Cellular + WireGuard | x86 (`serber-minipc`) | **78 Mbps** | [Report 22](reports/report-22.md) |
-| **Wi-Fi / GRE CU/DU Split** | Campus Wi-Fi + GRE Tunnel | x86 (`serber-minipc`) | **52 Mbps** | [Report 10](reports/report-10.md) |
-| **Jetson Orin Nano DU + 5G** | 5G Cellular + WireGuard | ARM Cortex-A78AE (Orin Nano) | **42 Mbps** | [Report 22](reports/report-22.md) |
-| **Untuned Split Baseline** | Ethernet (1500B MTU frag.) | x86 (`serber-minipc`) | **23 Mbps** | [Report 18](reports/report-18.md) |
-| **Raspberry Pi 5 DU** | 1 GbE Ethernet | BCM2712 Quad-Core ARM | **22 Mbps** | [Report 14](reports/report-14.md) |
+>  [`promaaa/oai-cu-du-lab`](https://github.com/promaaa/oai-cu-du-lab)
 
 ### Key Optimization Takeaways
 
