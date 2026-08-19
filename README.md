@@ -8,8 +8,6 @@ An experimental OpenAirInterface 5G Standalone (SA) testbed investigating 3GPP O
 ![Stack](https://img.shields.io/badge/OAI-5G%20SA-purple?style=flat-square)
 ![Reports](https://img.shields.io/badge/Reports-22%20Lab%20Notebooks-emerald?style=flat-square)
 
-![Throughput Benchmarks per Setup](reports/assets/throughput-benchmark.png)
-
 ## Overview
 
 This research repository documents an experimental **OpenAirInterface (OAI) 5G Standalone (SA)** testbed designed to evaluate disaggregated gNodeB deployments for aerial relay systems. Operating over **3GPP Band n78 (3.6 GHz, 106 PRB, 40 MHz)**, the study investigates how compute constraints, physical radio conditions, and non-ideal wireless F1 transport interact across heterogeneous hardware platforms.
