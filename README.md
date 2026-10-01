@@ -1,33 +1,33 @@
-<img src="reports/assets/kaust-logo.png" alt="KAUST — King Abdullah University of Science and Technology" align="right" height="64">
+<img src="reports/assets/kaust-logo.png" alt="KAUST" align="right" height="64">
 
-# Airborne OpenAirInterface 5G CU/DU Research
+# Toward Lightweight Aerial 5G Cells: A Reproducible Real-Radio OAI Split-DU Testbed on Commodity Arm Platforms
 
-An experimental OpenAirInterface 5G Standalone (SA) testbed investigating 3GPP Option 2 CU/DU disaggregation over heterogeneous wireless F1 transport, emergency Public Warning Systems (PWS), and embedded drone relay payloads.
+**[Paper (PDF)](paper/lightweight-aerial-5g-cells.pdf)** · **[Operator tooling](https://github.com/promaaa/oai-cu-du-lab)** · **[Jetson SCTP kernel](https://github.com/promaaa/jetson-kernel-sctp)** · **[Lab wiki](https://promaaa.github.io/oai-cu-du-lab/)**
 
-![Status](https://img.shields.io/badge/Status-Complete-success?style=flat-square)
-![Architecture](https://img.shields.io/badge/3GPP-Option%202%20(CU%2FDU)-blue?style=flat-square)
-![Band](https://img.shields.io/badge/Band-n78%20(3.6%20GHz)-orange?style=flat-square)
-![Stack](https://img.shields.io/badge/OAI-5G%20SA-purple?style=flat-square)
-![Reports](https://img.shields.io/badge/Reports-22%20Lab%20Notebooks-emerald?style=flat-square)
+Marc Duboc, Ammar El Falou · SeRBER lab, KAUST · paper submitted, 2026
 
-## Overview
+On a battery-powered UAV cell, every gram and watt spent on radio-access compute comes out of flight time. This testbed keeps the 5G core and the central unit (CU) on the ground and puts only the backhaul endpoint, the distributed unit (DU) and the radio in the air. The question is whether widely available Arm computers can run a real-radio OpenAirInterface 5G DU with useful performance over different F1 links. Raspberry Pi 5 and Jetson Orin Nano DUs drive a USRP B210 in band n78, with a commercial handset. F1 runs over Ethernet, Wi-Fi with GRE, or a Quectel 5G modem with WireGuard.
 
-This research repository documents an experimental **OpenAirInterface (OAI) 5G Standalone (SA)** testbed designed to evaluate disaggregated gNodeB deployments for aerial relay systems. Operating over **3GPP Band n78 (3.6 GHz, 106 PRB, 40 MHz)**, the study investigates how compute constraints, physical radio conditions, and non-ideal wireless F1 transport interact across heterogeneous hardware platforms.
+## Results
 
-Key research dimensions include:
-- **Transport Heterogeneity:** Comparing direct Ethernet, campus Wi-Fi (GRE tunnel), and cellular 5G modem (WireGuard overlay) F1 links.
-- **Embedded Compute Feasibility:** Evaluating x86 mini-PCs, NVIDIA Jetson Orin Nano, and Raspberry Pi 5 as airborne Distributed Unit (DU) payloads.
-- **Emergency Broadcast Services:** Validating commercial handset alerting via 3GPP Public Warning System (PWS / SIB8) over disaggregated gNodeBs.
+Mean handset downlink in Mbps, 20 trials per configuration (400 throughput observations in total, downlink and uplink):
 
-> **Operational Tooling:**  
-> The deployment automation, configuration templates, patch set, and operator TUI are maintained in the companion operational repository:  
->  [`promaaa/oai-cu-du-lab`](https://github.com/promaaa/oai-cu-du-lab)
+| DU | Ethernet F1 | Wi-Fi/GRE F1 | 5G/WireGuard F1 |
+|---|---:|---:|---:|
+| x86 mini PC | 99.4 | 51.8 | 76.2 |
+| Jetson Orin Nano | 87.9 | 45.3 | 67.8 |
+| Raspberry Pi 5 | 61.8 | 40.9 | 47.2 |
 
-### Key Optimization Takeaways
+Monolithic x86 gNB reference: 189.2 Mbps. Uplink ranges from 9.8 to 22.6 Mbps.
 
-- **TCP MSS Clamping (1360B):** Resolves GTP-U MTU fragmentation over tunneled F1 transport, preventing transport-block bloat and dropping physical-layer BLER from >80% to <5%.
-- **Scheduler Target BLER Tuning:** Raising `dl_bler_target_lower` to `0.25` and unlocking `dl_max_mcs: 28` enables the MAC scheduler to sustain higher modulation schemes (`MCS 24–27`).
-- **Jetson Orin Nano Kernel Tuning:** Compiling custom kernel modules for SCTP protocol support, enabling `MAXN_SUPER` power mode, and ensuring USB 3.0 SuperSpeed link rates unlocked stable 42 Mbps performance on embedded ARM.
+- The Jetson keeps 88.4 % of the x86 DU's Ethernet downlink, and 87.5–89.0 % across all three F1 links.
+- 5G/WireGuard backhaul keeps 76.4–77.1 % of each host's wired downlink.
+- A controlled link-adaptation change raised split-DU downlink from 23.4 to 99.4 Mbps as the dominant MCS moved from 3 to 26.
+- The Jetson, B210 and RM500Q-GL modem weigh 657.4 g and draw about 28 W under sustained traffic (757.4 g with an integration allowance).
+- A Raspberry Pi 5 DU uses about 1.8 CPU cores and 1.4 GB RAM at 64.8 °C, with no late-packet or overflow markers after thread pinning.
+- Public Warning System alerts reach handsets through the split: the CU sends the warning over F1 and the DU broadcasts it in SIB8. To our knowledge this is the first public OpenAirInterface patch for PWS over F1 ([patch](https://github.com/promaaa/oai-cu-du-lab/tree/main/patches/sib8)).
+
+Two DUs behind one ground CU were checked as a first step. Larger fan-out and flight tests are future work.
 
 ## Gallery & Testbed Setup
 
