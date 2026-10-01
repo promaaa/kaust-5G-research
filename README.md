@@ -1,3 +1,5 @@
+<img src="reports/assets/kaust-logo.png" alt="KAUST — King Abdullah University of Science and Technology" align="right" height="64">
+
 # Airborne OpenAirInterface 5G CU/DU Research
 
 An experimental OpenAirInterface 5G Standalone (SA) testbed investigating 3GPP Option 2 CU/DU disaggregation over heterogeneous wireless F1 transport, emergency Public Warning Systems (PWS), and embedded drone relay payloads.
