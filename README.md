@@ -77,8 +77,10 @@ Chronological laboratory reports detailing 16 weeks of experimental progression:
 
 See [`REFERENCES.md`](REFERENCES.md) for full citations.
 
-## Acknowledgements
+## Context and credits
 
-- **Lead Researcher:** Marc Duboc (IMT Atlantique / KAUST Research Team)
-- **Supervisors & Collaborators:** KAUST Resilient Communications Lab Team
-- **Software Stack:** [OpenAirInterface (OAI)](https://gitlab.eurecom.fr/oai/openairinterface5g)
+Research internship at KAUST in Marc Dacier's SeRBER lab (Security Research Bearing Experimental Results), 2026, supervised by Ammar El Falou. All testbed work, tooling and lab notebooks in this repository are by Marc Duboc.
+
+- Commits from @5gattacks come from the lab's shared GitHub account.
+- Thanks to @abouhasnawork, who worked on an earlier project with the same hardware, for the hand-over at the start.
+- Software stack: [OpenAirInterface](https://gitlab.eurecom.fr/oai/openairinterface5g).
