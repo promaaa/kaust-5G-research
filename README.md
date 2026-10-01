@@ -66,12 +66,6 @@ Chronological laboratory reports detailing 16 weeks of experimental progression:
 | [**Report 21**](reports/report-21.md) | Jul 12 | Power, mass, and Jetson validation benchmarks |
 | [**Report 22**](reports/report-22.md) | Jul 16 | Jetson 5G backhaul recovery (~40 Mbps) & drone sizing models |
 
-## Presentations
-
-- [Présentation Charlotte V2](https://docs.google.com/presentation/d/1PTyXXZYdgLUkJzEHDRDvrb-UP5atUvs2Kw81VID5y84/edit) (Google Slides)
-- [Présentation stage](https://docs.google.com/presentation/d/1-PejsoKiz7iE7Y6ZO_rdnELiBxwlDJI5kkbP2ylJjug/edit) (Google Slides)
-- [`french-project-presentation.md`](reports/french-project-presentation.md) (Obsidian Advanced Slides source)
-
 ## References
 
 1. R. Mundlamuri et al., *“Integrated Access and Backhaul in 5G with Aerial Distributed Unit using OpenAirInterface,”* 2023. [arXiv:2305.05983](https://arxiv.org/abs/2305.05983)
